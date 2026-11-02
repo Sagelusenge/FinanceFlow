@@ -36,5 +36,9 @@ services:
         value: 24.15.0
       - key: DATABASE_URL
         sync: false
+      - key: ADMIN_EMAIL
+        value: lusengesage@gmail.com
+      - key: ADMIN_INITIAL_PASSWORD
+        sync: false
       - key: FRONTEND_ORIGIN
         value: https://financeflow-app-eaip.onrender.com

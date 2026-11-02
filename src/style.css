@@ -57,6 +57,64 @@ body {
   gap: 4px;
   flex: 1;
 }
+.admin-password-notice {
+  margin-bottom: 18px;
+}
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.admin-metric {
+  display: grid;
+  gap: 10px;
+}
+.admin-metric strong {
+  font-size: 26px;
+}
+.admin-search {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+  max-width: 520px;
+}
+.admin-table-wrap {
+  overflow-x: auto;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+.admin-table th,
+.admin-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e7eaf0;
+  white-space: nowrap;
+}
+.admin-table td:first-child strong,
+.admin-table td:first-child small {
+  display: block;
+}
+.status-pill {
+  display: inline-block;
+  border-radius: 20px;
+  background: #e7f4ee;
+  color: #095c3d;
+  padding: 5px 9px;
+  font-weight: 700;
+}
+.status-pill.inactive {
+  background: #fff0f0;
+  color: #ad2020;
+}
+@media (max-width: 800px) {
+  .admin-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 button,
 input,
 select,
@@ -580,6 +638,31 @@ main {
 .tx-amount-wrap small {
   color: #67758b;
   font-size: 11px;
+}
+.tx-actions {
+  display: flex;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+.tx-actions a,
+.tx-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  border-radius: 7px;
+  background: #eff4ff;
+  color: #334155;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tx-actions .material-symbols-outlined {
+  font-size: 16px;
+}
+.tx-actions .danger {
+  background: #fff0f0;
+  color: #ad2020;
 }
 .positive {
   color: #006c49;
@@ -1225,8 +1308,12 @@ select:disabled {
   .transaction-row {
     gap: 7px;
   }
-  .transaction-row .icon-button {
-    display: none;
+  .transaction-row {
+    flex-wrap: wrap;
+  }
+  .tx-actions {
+    width: 100%;
+    justify-content: flex-end;
   }
   .card {
     padding: 15px;

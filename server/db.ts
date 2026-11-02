@@ -7,7 +7,7 @@ mkdirSync(dirname(file), { recursive: true });
 export const db = new DatabaseSync(file);
 db.exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;");
 db.exec(`
-CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, recovery_hash TEXT NOT NULL, currency TEXT NOT NULL DEFAULT 'USD', usd_cdf_rate REAL, month_start INTEGER NOT NULL DEFAULT 1, number_format TEXT NOT NULL DEFAULT 'fr-FR', theme TEXT NOT NULL DEFAULT 'light', created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, recovery_hash TEXT NOT NULL, currency TEXT NOT NULL DEFAULT 'USD', usd_cdf_rate REAL, month_start INTEGER NOT NULL DEFAULT 1, number_format TEXT NOT NULL DEFAULT 'fr-FR', theme TEXT NOT NULL DEFAULT 'light', is_admin INTEGER NOT NULL DEFAULT 0, must_change_password INTEGER NOT NULL DEFAULT 0, disabled_at TEXT, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS accounts (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL, type TEXT NOT NULL, currency TEXT NOT NULL, opening_cents INTEGER NOT NULL DEFAULT 0, icon TEXT NOT NULL DEFAULT 'account_balance_wallet', active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS categories (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL, type TEXT NOT NULL, icon TEXT NOT NULL, color TEXT NOT NULL, created_at TEXT NOT NULL);
@@ -23,6 +23,13 @@ const userColumns = db.prepare("PRAGMA table_info(users)").all() as {
 }[];
 if (!userColumns.some((column) => column.name === "usd_cdf_rate"))
   db.exec("ALTER TABLE users ADD COLUMN usd_cdf_rate REAL");
+for (const [name, definition] of [
+  ["is_admin", "INTEGER NOT NULL DEFAULT 0"],
+  ["must_change_password", "INTEGER NOT NULL DEFAULT 0"],
+  ["disabled_at", "TEXT"],
+])
+  if (!userColumns.some((column) => column.name === name))
+    db.exec(`ALTER TABLE users ADD COLUMN ${name} ${definition}`);
 const transactionColumns = db.prepare("PRAGMA table_info(transactions)").all() as {
   name: string;
 }[];

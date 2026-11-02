@@ -5,8 +5,10 @@ export async function api<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const isGet = !options.method || options.method.toUpperCase() === "GET";
+  const isAdmin = path.startsWith("/admin/");
   if (!navigator.onLine) {
     if (isGet) {
+      if (isAdmin) throw new Error("L’administration nécessite une connexion Internet.");
       const cached = await cachedResponse<T>(path);
       if (cached !== undefined) return cached;
       throw new Error("Ces données ne sont pas encore disponibles hors ligne. Ouvrez cette page avec Internet une première fois.");
@@ -48,9 +50,9 @@ export async function api<T>(
       throw new Error("Le serveur démarre. Réessayez dans un instant.");
     }
     const body = await response.json().catch(() => ({}));
-    if (response.status === 401 && path === "/me") await clearOfflineData();
+    if ([401, 403].includes(response.status) && path === "/me") await clearOfflineData();
     if (!response.ok) throw new Error(body.error || "Une erreur est survenue.");
-    if (isGet) await cacheResponse(path, body);
+    if (isGet && !isAdmin) await cacheResponse(path, body);
     return body as T;
   }
   throw new Error("Le serveur ne répond pas. Réessayez dans un instant.");

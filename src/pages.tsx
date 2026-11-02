@@ -160,7 +160,7 @@ function Metric({
     </div>
   );
 }
-function TransactionRows({ items }: { items: Transaction[] }) {
+function TransactionRows({ items, onDelete }: { items: Transaction[]; onDelete?: (id: string) => void }) {
   return (
     <div className="transaction-list">
       {items.map((t) => {
@@ -215,13 +215,16 @@ function TransactionRows({ items }: { items: Transaction[] }) {
               </small>
             )}
           </div>
-          <Link
-            className="icon-button"
-            aria-label={"Modifier " + t.description}
-            to={"/transactions/" + t.id + "/edit"}
-          >
-            <Icon name="edit" />
-          </Link>
+          <div className="tx-actions">
+            <Link aria-label={"Modifier " + t.description} to={"/transactions/" + t.id + "/edit"}>
+              <Icon name="edit" /> <span>Modifier</span>
+            </Link>
+            {onDelete && (
+              <button type="button" className="danger" aria-label={"Supprimer " + t.description} onClick={() => onDelete(t.id)}>
+                <Icon name="delete" /> <span>Supprimer</span>
+              </button>
+            )}
+          </div>
         </div>
         );
       })}
@@ -708,7 +711,7 @@ export function TransactionsPage() {
           <Loading />
         ) : data?.items.length ? (
           <>
-            <TransactionRows items={data.items} />
+            <TransactionRows items={data.items} onDelete={remove} />
             <div className="pagination">
               <button
                 disabled={filters.page <= 1}
@@ -725,17 +728,6 @@ export function TransactionsPage() {
               >
                 Suivant
               </button>
-            </div>
-            <div className="delete-list">
-              {data.items.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => remove(t.id)}
-                  aria-label={"Supprimer " + t.description}
-                >
-                  Supprimer {t.description}
-                </button>
-              ))}
             </div>
           </>
         ) : (

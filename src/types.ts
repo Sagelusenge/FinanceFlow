@@ -9,6 +9,8 @@ export interface User {
   month_start: number;
   number_format: string;
   theme: string;
+  is_admin: boolean;
+  must_change_password: boolean;
 }
 export interface Account {
   id: string;

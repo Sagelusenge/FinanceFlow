@@ -11,6 +11,7 @@ import { existsSync } from "node:fs";
 import { initDb, all, one, run, now, uid } from "./database.ts";
 
 const scrypt = promisify(scryptCallback);
+const adminEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
 const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
@@ -84,7 +85,56 @@ const publicUser = (u: Record<string, unknown>) => ({
   month_start: u.month_start,
   number_format: u.number_format,
   theme: u.theme,
+  is_admin: Boolean(u.is_admin) && u.email === adminEmail,
+  must_change_password: Boolean(u.must_change_password),
 });
+const defaultCategories: [string, string, string, string][] = [
+  ["Alimentation", "expense", "restaurant", "#ef4760"],
+  ["Transport", "expense", "directions_car", "#7c83d4"],
+  ["Logement", "expense", "home", "#3b82f6"],
+  ["Santé", "expense", "medical_services", "#ef7b45"],
+  ["Internet", "expense", "wifi", "#8b5cf6"],
+  ["Loisirs", "expense", "sports_esports", "#ec4899"],
+  ["Shopping", "expense", "shopping_bag", "#db7676"],
+  ["Factures", "expense", "receipt_long", "#64748b"],
+  ["Autres dépenses", "expense", "more_horiz", "#64748b"],
+  ["Salaire", "income", "payments", "#059669"],
+  ["Commerce", "income", "storefront", "#0d9488"],
+  ["Freelance", "income", "work", "#16a34a"],
+  ["Investissement", "income", "trending_up", "#0284c7"],
+  ["Autres revenus", "income", "add_circle", "#10b981"],
+];
+async function seedCategories(userId: string) {
+  for (const [name, type, icon, color] of defaultCategories)
+    await run(
+      "INSERT INTO categories VALUES (?,?,?,?,?,?,?)",
+      uid(), userId, name, type, icon, color, now(),
+    );
+}
+async function ensureAdmin() {
+  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD;
+  if (!adminEmail || !initialPassword) return;
+  if (!/^\S+@\S+\.\S+$/.test(adminEmail) || initialPassword.length < 10 || initialPassword.length > 200)
+    throw new Error("Configuration du compte admin invalide.");
+  const admins = await all<{ id: string; email: string }>("SELECT id,email FROM users WHERE is_admin=1");
+  if (admins.some((admin) => admin.email !== adminEmail))
+    throw new Error("Un autre administrateur existe déjà.");
+  const existing = await one<Record<string, unknown>>("SELECT * FROM users WHERE email=?", adminEmail);
+  if (existing?.is_admin) return;
+  const passwordHash = await hashPassword(initialPassword);
+  if (existing) {
+    await run("UPDATE users SET is_admin=1,must_change_password=1,password_hash=? WHERE id=?", passwordHash, String(existing.id));
+    await run("DELETE FROM sessions WHERE user_id=?", String(existing.id));
+    return;
+  }
+  const id = uid();
+  await run(
+    "INSERT INTO users (id,name,email,password_hash,recovery_hash,currency,month_start,number_format,theme,is_admin,must_change_password,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+    id, "Administrateur", adminEmail, passwordHash, digest(randomBytes(32).toString("hex")),
+    "USD", 1, "fr-FR", "light", 1, 1, now(),
+  );
+  await seedCategories(id);
+}
 app.use("/api", async (req, res, next) => {
   if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
     const origin = req.headers.origin;
@@ -135,6 +185,7 @@ app.post("/api/auth/register", async (req, res) => {
       res,
       "Nom, email valide et mot de passe de 10 caractères minimum requis.",
     );
+  if (email === adminEmail) return fail(res, "Cette adresse est réservée à l’administration.", 403);
   if (await one("SELECT id FROM users WHERE email=?", email))
     return fail(res, "Cette adresse est déjà utilisée.", 409);
   const id = uid(),
@@ -152,33 +203,7 @@ app.post("/api/auth/register", async (req, res) => {
     "light",
     now(),
   );
-  const defaults: [string, string, string, string][] = [
-    ["Alimentation", "expense", "restaurant", "#ef4760"],
-    ["Transport", "expense", "directions_car", "#7c83d4"],
-    ["Logement", "expense", "home", "#3b82f6"],
-    ["Santé", "expense", "medical_services", "#ef7b45"],
-    ["Internet", "expense", "wifi", "#8b5cf6"],
-    ["Loisirs", "expense", "sports_esports", "#ec4899"],
-    ["Shopping", "expense", "shopping_bag", "#db7676"],
-    ["Factures", "expense", "receipt_long", "#64748b"],
-    ["Autres dépenses", "expense", "more_horiz", "#64748b"],
-    ["Salaire", "income", "payments", "#059669"],
-    ["Commerce", "income", "storefront", "#0d9488"],
-    ["Freelance", "income", "work", "#16a34a"],
-    ["Investissement", "income", "trending_up", "#0284c7"],
-    ["Autres revenus", "income", "add_circle", "#10b981"],
-  ];
-  for (const [n, t, i, c] of defaults)
-    await run(
-      "INSERT INTO categories VALUES (?,?,?,?,?,?,?)",
-      uid(),
-      id,
-      n,
-      t,
-      i,
-      c,
-      now(),
-    );
+  await seedCategories(id);
   await session(req, res, id);
   res.status(201).json({
     user: publicUser((await one("SELECT * FROM users WHERE id=?", id))!),
@@ -198,8 +223,14 @@ app.post("/api/auth/login", async (req, res) => {
     !(await checkPassword(password, String(u.password_hash)))
   )
     return fail(res, "Identifiants incorrects.", 401);
+  if (u.disabled_at) return fail(res, "Compte désactivé. Contactez l’administrateur.", 403);
+  let recoveryCode: string | undefined;
+  if (u.is_admin && u.email === adminEmail && u.must_change_password) {
+    recoveryCode = randomBytes(16).toString("hex");
+    await run("UPDATE users SET recovery_hash=? WHERE id=?", digest(recoveryCode), String(u.id));
+  }
   await session(req, res, String(u.id));
-  res.json({ user: publicUser(u) });
+  res.json({ user: publicUser(u), ...(recoveryCode ? { recoveryCode } : {}) });
 });
 app.post("/api/auth/logout", async (req, res) => {
   await clearSession(req, res);
@@ -219,7 +250,7 @@ app.post("/api/auth/reset", async (req, res) => {
     return fail(res, "Code de récupération invalide.", 401);
   const fresh = randomBytes(16).toString("hex");
   await run(
-    "UPDATE users SET password_hash=?,recovery_hash=? WHERE id=?",
+    "UPDATE users SET password_hash=?,recovery_hash=?,must_change_password=0 WHERE id=?",
     await hashPassword(password),
     digest(fresh),
     String(u.id),
@@ -238,6 +269,7 @@ app.use("/api", async (req, res, next) => {
       )
     : undefined;
   if (!u) return fail(res, "Session expirée. Connectez-vous.", 401);
+  if (u.disabled_at) return fail(res, "Compte désactivé. Contactez l’administrateur.", 403);
   res.locals.user = u;
   next();
 });
@@ -299,14 +331,16 @@ app.put("/api/me/password", async (req, res) => {
     typeof req.body.currentPassword !== "string" ||
     !(await checkPassword(req.body.currentPassword, String(u.password_hash))) ||
     typeof req.body.newPassword !== "string" ||
-    req.body.newPassword.length < 10
+    req.body.newPassword.length < 10 ||
+    req.body.newPassword.length > 200 ||
+    req.body.newPassword === req.body.currentPassword
   )
     return fail(
       res,
-      "Mot de passe actuel incorrect ou nouveau mot de passe trop court.",
+      "Mot de passe actuel incorrect ou nouveau mot de passe invalide (10 à 200 caractères et différent de l’ancien).",
     );
   await run(
-    "UPDATE users SET password_hash=? WHERE id=?",
+    "UPDATE users SET password_hash=?,must_change_password=0 WHERE id=?",
     await hashPassword(req.body.newPassword),
     String(u.id),
   );
@@ -315,6 +349,50 @@ app.put("/api/me/password", async (req, res) => {
     String(u.id),
     digest(cookies(req).ff_session || ""),
   );
+  res.json(publicUser((await one("SELECT * FROM users WHERE id=?", String(u.id)))!));
+});
+app.use("/api/admin", (req, res, next) => {
+  const u = res.locals.user as Record<string, unknown>;
+  if (!u.is_admin || u.email !== adminEmail) return fail(res, "Accès administrateur refusé.", 403);
+  if (u.must_change_password) return fail(res, "Changez le mot de passe initial avant d’ouvrir l’administration.", 403);
+  next();
+});
+app.get("/api/admin/summary", async (_req, res) => {
+  const [users, activeUsers, accounts, transactions] = await Promise.all([
+    one<{ count: number }>("SELECT COUNT(*) AS count FROM users"),
+    one<{ count: number }>("SELECT COUNT(*) AS count FROM users WHERE disabled_at IS NULL"),
+    one<{ count: number }>("SELECT COUNT(*) AS count FROM accounts"),
+    one<{ count: number }>("SELECT COUNT(*) AS count FROM transactions"),
+  ]);
+  res.json({
+    users: Number(users?.count || 0),
+    active_users: Number(activeUsers?.count || 0),
+    accounts: Number(accounts?.count || 0),
+    transactions: Number(transactions?.count || 0),
+  });
+});
+app.get("/api/admin/users", async (req, res) => {
+  const page = Math.max(1, Math.floor(Number(req.query.page) || 1));
+  const search = text(req.query.search, 100);
+  const where = search ? "WHERE u.email LIKE ? OR u.name LIKE ?" : "";
+  const params = search ? [`%${search}%`, `%${search}%`] : [];
+  const total = await one<{ count: number }>(`SELECT COUNT(*) AS count FROM users u ${where}`, ...params);
+  const items = await all(
+    `SELECT u.id,u.name,u.email,u.is_admin,u.disabled_at,u.created_at,` +
+      `(SELECT COUNT(*) FROM accounts a WHERE a.user_id=u.id) AS account_count,` +
+      `(SELECT COUNT(*) FROM transactions t WHERE t.user_id=u.id) AS transaction_count ` +
+      `FROM users u ${where} ORDER BY u.created_at DESC LIMIT ? OFFSET ?`,
+    ...params, 25, (page - 1) * 25,
+  );
+  res.json({ items, total: Number(total?.count || 0), page, pages: Math.ceil(Number(total?.count || 0) / 25) });
+});
+app.put("/api/admin/users/:id/status", async (req, res) => {
+  if (typeof req.body.disabled !== "boolean") return fail(res, "Statut invalide.");
+  const target = await one<{ id: string; is_admin: number }>("SELECT id,is_admin FROM users WHERE id=?", req.params.id);
+  if (!target) return fail(res, "Utilisateur introuvable.", 404);
+  if (target.is_admin || target.id === userId(res)) return fail(res, "Le compte administrateur ne peut pas être désactivé.", 403);
+  await run("UPDATE users SET disabled_at=? WHERE id=?", req.body.disabled ? now() : null, target.id);
+  if (req.body.disabled) await run("DELETE FROM sessions WHERE user_id=?", target.id);
   res.json({ ok: true });
 });
 app.get("/api/accounts", async (_req, res) =>
@@ -887,6 +965,7 @@ if (existsSync(dist)) {
   );
 }
 await initDb();
+await ensureAdmin();
 app.listen(Number(process.env.PORT) || 3001, () =>
   console.log(`FinanceFlow: http://localhost:${process.env.PORT || 3001}`),
 );

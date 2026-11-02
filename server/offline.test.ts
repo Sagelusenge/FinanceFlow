@@ -22,7 +22,7 @@ Object.defineProperty(globalThis, "window", { configurable: true, value: new Eve
 Object.defineProperty(globalThis, "navigator", { configurable: true, value: { onLine: true } });
 
 test("offline data stays scoped and queued transactions survive failed sync", async () => {
-  const user = { id: "user-a", name: "Alice", email: "a@test.local", currency: "USD" as const, usd_cdf_rate: 2850, month_start: 1, number_format: "fr-FR", theme: "light" };
+  const user = { id: "user-a", name: "Alice", email: "a@test.local", currency: "USD" as const, usd_cdf_rate: 2850, month_start: 1, number_format: "fr-FR", theme: "light", is_admin: false, must_change_password: false };
   await rememberUser(user);
   await cacheResponse("/accounts", [{ id: "account-a" }]);
   assert.deepEqual(await cachedResponse("/accounts"), [{ id: "account-a" }]);

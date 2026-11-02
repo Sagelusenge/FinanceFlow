@@ -646,7 +646,8 @@ export function SettingsPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      await send("/me/password", "PUT", { currentPassword, newPassword });
+      const updated = await send<User>("/me/password", "PUT", { currentPassword, newPassword });
+      setUser(updated);
       setCurrentPassword("");
       setNewPassword("");
       flash("Mot de passe modifié.");
@@ -663,6 +664,11 @@ export function SettingsPage() {
         title="Paramètres"
         desc="Gérez votre profil, vos préférences et la sécurité de votre compte."
       />
+      {user.must_change_password && (
+        <div className="notice admin-password-notice" role="alert">
+          Changez le mot de passe administrateur initial avant d’utiliser l’application.
+        </div>
+      )}
       <div className="two-col">
         <form className="card form-card stack" onSubmit={save}>
           <h2>Profil et préférences</h2>

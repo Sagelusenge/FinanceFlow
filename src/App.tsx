@@ -19,6 +19,7 @@ import {
 import type { Account, Category, User } from "./types";
 import { api, send } from "./lib";
 import { PasswordInput } from "./PasswordInput";
+import { AdminPage } from "./AdminPage";
 import { clearOfflineData, queuedTransactions, rememberUser, syncQueuedTransactions } from "./offline";
 import { Dashboard, TransactionsPage, TransactionForm } from "./pages";
 import { AccountsPage, CategoriesPage, BudgetsPage, GoalsPage } from "./pages2";
@@ -59,6 +60,7 @@ const links = [
 ];
 
 function Auth({ onLogin }: { onLogin: (u: User) => void }) {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register" | "reset">("login"),
     [name, setName] = useState(""),
     [email, setEmail] = useState(""),
@@ -68,6 +70,10 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
     [copyStatus, setCopyStatus] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const finishLogin = (next: User) => {
+    onLogin(next);
+    navigate(next.must_change_password ? "/settings" : next.is_admin ? "/admin" : "/");
+  };
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError("");
@@ -93,7 +99,7 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
           setRecovery(r.recoveryCode);
           setCopyStatus("");
         }
-        else onLogin(r.user);
+        else finishLogin(r.user);
       }
     } catch (e) {
       setError((e as Error).message);
@@ -152,7 +158,7 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
                 setRecovery("");
                 setCopyStatus("");
                 api<User>("/me")
-                  .then(onLogin)
+                  .then(finishLogin)
                   .catch(() => {});
               }}
             >
@@ -280,6 +286,9 @@ function Shell({ children }: { children: ReactNode }) {
     [syncing, setSyncing] = useState(false);
   const navigate = useNavigate(),
     location = useLocation();
+  const visibleLinks = user.is_admin && !user.must_change_password
+    ? [...links, ["/admin", "admin_panel_settings", "Administration"]]
+    : links;
   useEffect(() => setMobile(false), [location.pathname]);
   const syncPending = useCallback(async () => {
     if (!navigator.onLine) return;
@@ -331,7 +340,7 @@ function Shell({ children }: { children: ReactNode }) {
             <strong>FinanceFlow</strong>
           </Link>
           <nav>
-            {links.map(([to, icon, label]) => (
+            {visibleLinks.map(([to, icon, label]) => (
               <NavLink
                 key={to}
                 to={to}
@@ -372,7 +381,7 @@ function Shell({ children }: { children: ReactNode }) {
             <span>Portefeuille</span>
             <Icon name="chevron_right" />
             <strong>
-              {links.find(([p]) => p === location.pathname)?.[2] ||
+              {visibleLinks.find(([p]) => p === location.pathname)?.[2] ||
                 "FinanceFlow"}
             </strong>
           </div>
@@ -477,8 +486,15 @@ export default function App() {
           value={{ user, setUser: updateUser, accounts, categories, reload, flash }}
         >
           <Shell>
+            {user.must_change_password ? (
+              <Routes>
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="*" element={<Navigate to="/settings" />} />
+              </Routes>
+            ) : (
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/admin" element={user.is_admin ? <AdminPage /> : <Navigate to="/" />} />
               <Route path="/accounts" element={<AccountsPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/transactions" element={<TransactionsPage />} />
@@ -495,6 +511,7 @@ export default function App() {
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
+            )}
           </Shell>
         </FinanceContext.Provider>
       )}
