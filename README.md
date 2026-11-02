@@ -24,7 +24,7 @@ npm test
 
 Le fichier `render.yaml` définit deux services gratuits : `financeflow-app`, un site statique Render pour le client React, et `financeflow`, le service Node de l’API Express. Le site statique affiche l’interface immédiatement. Ses routes `/api/*` sont réécrites vers le service Node, ce qui conserve les cookies de session sur le domaine du site. Les autres routes renvoient `index.html` pour React Router.
 
-Lors de la création du Blueprint dans Render, saisir `DATABASE_URL` dans le champ secret demandé pour le service Node. Le format est `mysql://UTILISATEUR:MOT_DE_PASSE@HOTE:PORT/NOM_BASE`. Ne jamais inscrire ce secret dans le dépôt. Après la première création du site statique, définir `FRONTEND_ORIGIN` sur le service Node avec l’URL exacte du site statique, par exemple `https://financeflow-app-xxxx.onrender.com`, puis redéployer l’API. Cette valeur autorise les requêtes d’écriture provenant du nouveau domaine.
+Lors de la création du Blueprint dans Render, saisir `DATABASE_URL` dans le champ secret demandé pour le service Node. Le format est `mysql://UTILISATEUR:MOT_DE_PASSE@HOTE:PORT/NOM_BASE`. Ne jamais inscrire ce secret dans le dépôt. Le site statique public est [financeflow-app-eaip.onrender.com](https://financeflow-app-eaip.onrender.com). Sa valeur `FRONTEND_ORIGIN` est inscrite dans le Blueprint pour autoriser les requêtes d’écriture provenant de ce domaine.
 
 Le certificat CA Aiven fourni pour ce projet est dans `certs/aiven-ca.pem`. Après rotation du certificat côté Aiven, remplacer le fichier et redéployer. Le point de santé `/health` vérifie aussi l’accès à la base. Les tables sont créées au démarrage si elles n’existent pas.
 
