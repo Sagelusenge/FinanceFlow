@@ -5,6 +5,7 @@ export interface User {
   name: string;
   email: string;
   currency: Currency;
+  usd_cdf_rate: number | null;
   month_start: number;
   number_format: string;
   theme: string;

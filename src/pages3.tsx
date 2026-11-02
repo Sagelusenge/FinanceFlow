@@ -602,6 +602,9 @@ export function SettingsPage() {
   const { user, setUser, flash } = useFinance(),
     [name, setName] = useState(user.name),
     [cur, setCur] = useState<Currency>(user.currency),
+    [rate, setRate] = useState(
+      user.usd_cdf_rate == null ? "" : String(user.usd_cdf_rate),
+    ),
     [month, setMonth] = useState(user.month_start),
     [numberFormat, setNumberFormat] = useState(user.number_format),
     [theme, setTheme] = useState(user.theme),
@@ -615,6 +618,7 @@ export function SettingsPage() {
       const u = await send<User>("/me", "PUT", {
         name,
         currency: cur,
+        usd_cdf_rate: rate.trim() === "" ? null : Number(rate),
         month_start: Number(month),
         number_format: numberFormat,
         theme,
@@ -672,6 +676,22 @@ export function SettingsPage() {
               <option>USD</option>
               <option>CDF</option>
             </select>
+          </label>
+          <label>
+            Taux de change manuel : 1 USD = combien de CDF ?
+            <input
+              type="number"
+              min="0.0001"
+              max="1000000000"
+              step="0.0001"
+              placeholder="Ex. 2850"
+              value={rate}
+              onChange={(e) => setRate(e.target.value)}
+            />
+            <small className="muted">
+              Laisser vide pour désactiver les contre-valeurs. Les montants des
+              comptes restent dans leur devise d’origine.
+            </small>
           </label>
           <label>
             Début du mois financier

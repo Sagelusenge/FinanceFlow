@@ -51,6 +51,18 @@ export const formatMoney = (
   }).format(cents / 100) +
   " " +
   currency;
+export const convertMoney = (
+  cents: number,
+  from: Currency,
+  to: Currency,
+  usdCdfRate: number | null,
+) => {
+  if (from === to) return cents;
+  if (!usdCdfRate || usdCdfRate <= 0) return null;
+  return Math.round(
+    from === "USD" ? cents * usdCdfRate : cents / usdCdfRate,
+  );
+};
 export const formatDate = (d: string) =>
   new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" }).format(
     new Date(d + "T12:00:00"),

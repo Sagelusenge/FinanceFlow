@@ -80,6 +80,7 @@ const publicUser = (u: Record<string, unknown>) => ({
   name: u.name,
   email: u.email,
   currency: u.currency,
+  usd_cdf_rate: u.usd_cdf_rate,
   month_start: u.month_start,
   number_format: u.number_format,
   theme: u.theme,
@@ -139,7 +140,7 @@ app.post("/api/auth/register", async (req, res) => {
   const id = uid(),
     recovery = randomBytes(16).toString("hex");
   await run(
-    "INSERT INTO users VALUES (?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO users (id,name,email,password_hash,recovery_hash,currency,month_start,number_format,theme,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
     id,
     name,
     email,
@@ -254,12 +255,23 @@ app.put("/api/me", async (req, res) => {
   const u = res.locals.user;
   const name = text(req.body.name, 80),
     cur = currency(req.body.currency),
+    submittedRate = req.body.usd_cdf_rate,
+    rate =
+      submittedRate === undefined
+        ? (u.usd_cdf_rate ?? null)
+        : submittedRate,
     month = Number(req.body.month_start),
     fmt = req.body.number_format,
     theme = req.body.theme;
   if (
     !name ||
     !cur ||
+    (rate !== null &&
+      (typeof rate !== "number" ||
+        !Number.isFinite(rate) ||
+        rate <= 0 ||
+        rate > 1_000_000_000 ||
+        Math.round(rate * 10_000) !== rate * 10_000)) ||
     !Number.isInteger(month) ||
     month < 1 ||
     month > 28 ||
@@ -268,9 +280,10 @@ app.put("/api/me", async (req, res) => {
   )
     return fail(res, "Préférences invalides.");
   await run(
-    "UPDATE users SET name=?,currency=?,month_start=?,number_format=?,theme=? WHERE id=?",
+    "UPDATE users SET name=?,currency=?,usd_cdf_rate=?,month_start=?,number_format=?,theme=? WHERE id=?",
     name,
     cur,
+    rate,
     month,
     fmt,
     theme,

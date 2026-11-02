@@ -3,10 +3,21 @@ import { strict as assert } from 'node:assert';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { once } from 'node:events';
+import { mkdirSync } from 'node:fs';
+import { DatabaseSync } from 'node:sqlite';
+import { convertMoney } from '../src/lib.ts';
 
 test('sessions, ownership, balances and transfers', async () => {
+  assert.equal(convertMoney(10_000, 'USD', 'CDF', 2850), 28_500_000);
+  assert.equal(convertMoney(28_500_000, 'CDF', 'USD', 2850), 10_000);
+  assert.equal(convertMoney(10_000, 'USD', 'CDF', null), null);
   const port = 32000 + Math.floor(Math.random() * 1000);
-  const child = spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'server/index.ts'], { env: { ...process.env, PORT: String(port), DATABASE_FILE: `data/test-${randomUUID()}.sqlite` }, stdio: ['ignore', 'pipe', 'pipe'] });
+  const databaseFile = `data/test-${randomUUID()}.sqlite`;
+  mkdirSync('data', { recursive: true });
+  const oldDatabase = new DatabaseSync(databaseFile);
+  oldDatabase.exec("CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, recovery_hash TEXT NOT NULL, currency TEXT NOT NULL DEFAULT 'USD', month_start INTEGER NOT NULL DEFAULT 1, number_format TEXT NOT NULL DEFAULT 'fr-FR', theme TEXT NOT NULL DEFAULT 'light', created_at TEXT NOT NULL)");
+  oldDatabase.close();
+  const child = spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'server/index.ts'], { env: { ...process.env, PORT: String(port), DATABASE_FILE: databaseFile }, stdio: ['ignore', 'pipe', 'pipe'] });
   try {
     let ready = false;
     child.stdout.on('data', chunk => { if (String(chunk).includes('FinanceFlow:')) ready = true; });
@@ -20,6 +31,13 @@ test('sessions, ownership, balances and transfers', async () => {
     assert.equal(first.status, 201);
     assert.ok(first.body.recoveryCode);
     const cookie = first.cookie;
+    assert.equal(first.body.user.usd_cdf_rate, null);
+    const preferences = { name: 'Alice', currency: 'USD', usd_cdf_rate: 2850.5, month_start: 1, number_format: 'fr-FR', theme: 'light' };
+    const saved = await call('/me', 'PUT', preferences, cookie);
+    assert.equal(saved.status, 200);
+    assert.equal(saved.body.usd_cdf_rate, 2850.5);
+    assert.equal((await call('/me', 'GET', undefined, cookie)).body.usd_cdf_rate, 2850.5);
+    assert.equal((await call('/me', 'PUT', { ...preferences, usd_cdf_rate: 0 }, cookie)).status, 400);
     const accountA = await call('/accounts', 'POST', { name: 'Cash', type: 'cash', currency: 'USD', openingBalance: 100 }, cookie);
     const accountB = await call('/accounts', 'POST', { name: 'Bank', type: 'bank', currency: 'USD', openingBalance: 0 }, cookie);
     const cats = await call('/categories', 'GET', undefined, cookie);
@@ -35,6 +53,7 @@ test('sessions, ownership, balances and transfers', async () => {
     assert.deepEqual(analytics.body.totals, [{ type: 'expense', amount_cents: 1000 }]);
     const second = await call('/auth/register', 'POST', { name: 'Bob', email: 'bob@test.local', password: 'another correct password' });
     assert.equal(second.status, 201);
+    assert.equal(second.body.user.usd_cdf_rate, null);
     assert.equal((await call(`/transactions/${expense.body.id}`, 'GET', undefined, second.cookie)).status, 404);
     assert.equal((await call(`/accounts/${accountA.body.id}`, 'DELETE', undefined, second.cookie)).status, 404);
     assert.equal((await call('/transactions', 'GET', undefined, second.cookie)).body.total, 0);

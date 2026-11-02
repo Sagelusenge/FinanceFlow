@@ -9,7 +9,7 @@ let sqlite: SQLite | undefined;
 let pool: Pool | undefined;
 
 const schema = [
-  `CREATE TABLE IF NOT EXISTS users (id CHAR(36) PRIMARY KEY, name VARCHAR(80) NOT NULL, email VARCHAR(254) NOT NULL UNIQUE, password_hash VARCHAR(200) NOT NULL, recovery_hash CHAR(64) NOT NULL, currency CHAR(3) NOT NULL DEFAULT 'USD', month_start TINYINT NOT NULL DEFAULT 1, number_format VARCHAR(10) NOT NULL DEFAULT 'fr-FR', theme VARCHAR(10) NOT NULL DEFAULT 'light', created_at VARCHAR(30) NOT NULL) ENGINE=InnoDB`,
+  `CREATE TABLE IF NOT EXISTS users (id CHAR(36) PRIMARY KEY, name VARCHAR(80) NOT NULL, email VARCHAR(254) NOT NULL UNIQUE, password_hash VARCHAR(200) NOT NULL, recovery_hash CHAR(64) NOT NULL, currency CHAR(3) NOT NULL DEFAULT 'USD', usd_cdf_rate DECIMAL(14,4) NULL, month_start TINYINT NOT NULL DEFAULT 1, number_format VARCHAR(10) NOT NULL DEFAULT 'fr-FR', theme VARCHAR(10) NOT NULL DEFAULT 'light', created_at VARCHAR(30) NOT NULL) ENGINE=InnoDB`,
   `CREATE TABLE IF NOT EXISTS sessions (token_hash CHAR(64) PRIMARY KEY, user_id CHAR(36) NOT NULL, expires_at VARCHAR(30) NOT NULL, INDEX sessions_user(user_id), CONSTRAINT sessions_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE) ENGINE=InnoDB`,
   `CREATE TABLE IF NOT EXISTS accounts (id CHAR(36) PRIMARY KEY, user_id CHAR(36) NOT NULL, name VARCHAR(80) NOT NULL, type VARCHAR(40) NOT NULL, currency CHAR(3) NOT NULL, opening_cents BIGINT NOT NULL DEFAULT 0, icon VARCHAR(40) NOT NULL DEFAULT 'account_balance_wallet', active BOOLEAN NOT NULL DEFAULT TRUE, created_at VARCHAR(30) NOT NULL, INDEX accounts_user(user_id), CONSTRAINT accounts_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE) ENGINE=InnoDB`,
   `CREATE TABLE IF NOT EXISTS categories (id CHAR(36) PRIMARY KEY, user_id CHAR(36) NOT NULL, name VARCHAR(60) NOT NULL, type VARCHAR(10) NOT NULL, icon VARCHAR(40) NOT NULL, color CHAR(7) NOT NULL, created_at VARCHAR(30) NOT NULL, INDEX categories_user(user_id), CONSTRAINT categories_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE) ENGINE=InnoDB`,
@@ -47,6 +47,11 @@ export async function initDb() {
   });
   await pool.query("SELECT 1");
   for (const statement of schema) await pool.query(statement);
+  const [rateColumns] = await pool.query(
+    "SHOW COLUMNS FROM users LIKE 'usd_cdf_rate'",
+  );
+  if (Array.isArray(rateColumns) && rateColumns.length === 0)
+    await pool.query("ALTER TABLE users ADD COLUMN usd_cdf_rate DECIMAL(14,4) NULL");
 }
 export const now = () => new Date().toISOString();
 export const uid = () => randomUUID();

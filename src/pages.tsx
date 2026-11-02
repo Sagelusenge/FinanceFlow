@@ -10,6 +10,7 @@ import { useFinance } from "./App";
 import {
   api,
   send,
+  convertMoney,
   formatMoney,
   formatDate,
   iso,
@@ -312,7 +313,22 @@ export function Dashboard() {
           : "0 % vs mois précédent",
     balance = accounts
       .filter((x) => x.currency === user.currency)
-      .reduce((s, x) => s + x.balance_cents, 0);
+      .reduce((s, x) => s + x.balance_cents, 0),
+    hasOtherCurrency = accounts.some((x) => x.currency !== user.currency),
+    showEstimatedBalance = Boolean(user.usd_cdf_rate && hasOtherCurrency),
+    estimatedBalance = showEstimatedBalance
+      ? accounts.reduce(
+          (sum, account) =>
+            sum +
+            (convertMoney(
+              account.balance_cents,
+              account.currency,
+              user.currency,
+              user.usd_cdf_rate,
+            ) || 0),
+          0,
+        )
+      : balance;
   return (
     <>
       <Title
@@ -332,10 +348,14 @@ export function Dashboard() {
         ) : (
           <>
             <Metric
-              label="Solde disponible"
-              value={moneyLabel(balance, user.currency)}
+              label={showEstimatedBalance ? "Solde total estimé" : "Solde disponible"}
+              value={moneyLabel(estimatedBalance, user.currency)}
               icon="account_balance"
-              footer={`${accounts.filter((x) => x.currency === user.currency).length} compte(s) en ${user.currency}`}
+              footer={
+                showEstimatedBalance
+                  ? `Tous comptes · taux manuel : 1 USD = ${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 4 }).format(user.usd_cdf_rate!)} CDF`
+                  : `${accounts.filter((x) => x.currency === user.currency).length} compte(s) en ${user.currency}`
+              }
             />
             <Metric
               label="Revenus du mois"
