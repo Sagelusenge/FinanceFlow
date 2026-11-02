@@ -1,5 +1,20 @@
 services:
   - type: web
+    name: financeflow-app
+    runtime: static
+    buildCommand: npm ci --include=dev && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://financeflow-idtm.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 24.15.0
+  - type: web
     name: financeflow
     runtime: node
     plan: free

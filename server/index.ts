@@ -87,8 +87,19 @@ const publicUser = (u: Record<string, unknown>) => ({
 app.use("/api", async (req, res, next) => {
   if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
     const origin = req.headers.origin;
-    if (origin && new URL(origin).host !== req.headers.host)
-      return fail(res, "Origine non autorisée.", 403);
+    if (origin) {
+      let originHost = "";
+      try {
+        originHost = new URL(origin).host;
+      } catch {
+        return fail(res, "Origine non autorisée.", 403);
+      }
+      if (
+        originHost !== req.headers.host &&
+        origin !== process.env.FRONTEND_ORIGIN
+      )
+        return fail(res, "Origine non autorisée.", 403);
+    }
   }
   next();
 });

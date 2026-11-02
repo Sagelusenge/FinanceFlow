@@ -3,14 +3,35 @@ export async function api<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const response = await fetch("/api" + path, {
-    credentials: "same-origin",
-    headers: { "Content-Type": "application/json", ...options.headers },
-    ...options,
-  });
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Une erreur est survenue.");
-  return body as T;
+  const isGet = !options.method || options.method.toUpperCase() === "GET";
+  for (let attempt = 0; attempt < (isGet ? 30 : 1); attempt++) {
+    let response: Response;
+    try {
+      response = await fetch("/api" + path, {
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", ...options.headers },
+        ...options,
+      });
+    } catch (error) {
+      if (!isGet || attempt === 29) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      continue;
+    }
+    const json = response.headers.get("content-type")?.includes("application/json");
+    if (
+      isGet &&
+      attempt < 29 &&
+      ([502, 503, 504].includes(response.status) || !json)
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      continue;
+    }
+    if (!json) throw new Error("Le serveur démarre. Réessayez dans un instant.");
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error || "Une erreur est survenue.");
+    return body as T;
+  }
+  throw new Error("Le serveur ne répond pas. Réessayez dans un instant.");
 }
 export const send = <T>(path: string, method: string, data?: unknown) =>
   api<T>(path, {
