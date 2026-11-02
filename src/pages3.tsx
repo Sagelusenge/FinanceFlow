@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useFinance } from "./App";
 import { canPromptInstall, installApp, isInstalled } from "./install";
+import { PasswordInput } from "./PasswordInput";
 import {
   api,
   send,
@@ -738,19 +739,21 @@ export function SettingsPage() {
           <h2>Sécurité</h2>
           <label>
             Mot de passe actuel
-            <input
+            <PasswordInput
               required
-              type="password"
+              visibilityLabel="le mot de passe actuel"
+              aria-label="Mot de passe actuel"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </label>
           <label>
             Nouveau mot de passe
-            <input
+            <PasswordInput
               required
               minLength={10}
-              type="password"
+              visibilityLabel="le nouveau mot de passe"
+              aria-label="Nouveau mot de passe"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />

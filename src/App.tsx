@@ -18,6 +18,7 @@ import {
 } from "react-router-dom";
 import type { Account, Category, User } from "./types";
 import { api, send } from "./lib";
+import { PasswordInput } from "./PasswordInput";
 import { clearOfflineData, queuedTransactions, rememberUser, syncQueuedTransactions } from "./offline";
 import { Dashboard, TransactionsPage, TransactionForm } from "./pages";
 import { AccountsPage, CategoriesPage, BudgetsPage, GoalsPage } from "./pages2";
@@ -64,6 +65,7 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
     [password, setPassword] = useState(""),
     [code, setCode] = useState(""),
     [recovery, setRecovery] = useState(""),
+    [copyStatus, setCopyStatus] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   async function submit(e: FormEvent) {
@@ -78,6 +80,7 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
           password,
         });
         setRecovery(r.recoveryCode);
+        setCopyStatus("");
         setMode("login");
         setPassword("");
       } else {
@@ -86,7 +89,10 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
           "POST",
           { name, email, password },
         );
-        if (r.recoveryCode) setRecovery(r.recoveryCode);
+        if (r.recoveryCode) {
+          setRecovery(r.recoveryCode);
+          setCopyStatus("");
+        }
         else onLogin(r.user);
       }
     } catch (e) {
@@ -122,11 +128,29 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
               Il vous sera demandé si vous oubliez votre mot de passe. Il ne
               sera plus affiché après cette étape.
             </p>
-            <code>{recovery}</code>
+            <div className="recovery-code">
+              <code>{recovery}</code>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(recovery);
+                    setCopyStatus("Code copié.");
+                  } catch {
+                    setCopyStatus("Copie impossible. Sélectionnez le code pour le copier.");
+                  }
+                }}
+              >
+                <Icon name="content_copy" /> Copier
+              </button>
+            </div>
+            {copyStatus && <small role="status">{copyStatus}</small>}
             <button
               className="primary wide"
               onClick={() => {
                 setRecovery("");
+                setCopyStatus("");
                 api<User>("/me")
                   .then(onLogin)
                   .catch(() => {});
@@ -185,10 +209,12 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
               )}
               <label>
                 Mot de passe <small>10 caractères minimum</small>
-                <input
+                <PasswordInput
+                  key={mode}
                   required
                   minLength={mode === "login" ? 1 : 10}
-                  type="password"
+                  visibilityLabel="le mot de passe"
+                  aria-label="Mot de passe"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete={
