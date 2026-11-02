@@ -2,6 +2,8 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import "@fontsource-variable/plus-jakarta-sans";
+import "@fontsource/material-symbols-outlined/400.css";
 import "./style.css";
 import "./dark.css";
 import "./responsive.css";
@@ -12,3 +14,7 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </React.StrictMode>,
 );
+if ("serviceWorker" in navigator && import.meta.env.PROD)
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => {});
+  });

@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useFinance } from "./App";
+import { canPromptInstall, installApp, isInstalled } from "./install";
 import {
   api,
   send,
@@ -10,7 +11,6 @@ import {
   savingsRate,
 } from "./lib";
 import type { Analytics, Category, Currency, Recurring, User } from "./types";
-import { useEffect } from "react";
 const Icon = ({ name }: { name: string }) => (
   <span className="material-symbols-outlined" aria-hidden="true">
     {name}
@@ -600,6 +600,8 @@ export function RecurringPage() {
 }
 export function SettingsPage() {
   const { user, setUser, flash } = useFinance(),
+    [installable, setInstallable] = useState(canPromptInstall()),
+    [installed, setInstalled] = useState(isInstalled()),
     [name, setName] = useState(user.name),
     [cur, setCur] = useState<Currency>(user.currency),
     [rate, setRate] = useState(
@@ -611,6 +613,14 @@ export function SettingsPage() {
     [currentPassword, setCurrentPassword] = useState(""),
     [newPassword, setNewPassword] = useState(""),
     [busy, setBusy] = useState(false);
+  useEffect(() => {
+    const update = () => {
+      setInstallable(canPromptInstall());
+      setInstalled(isInstalled());
+    };
+    window.addEventListener("financeflow:installable", update);
+    return () => window.removeEventListener("financeflow:installable", update);
+  }, []);
   async function save(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -689,8 +699,8 @@ export function SettingsPage() {
               onChange={(e) => setRate(e.target.value)}
             />
             <small className="muted">
-              Laisser vide pour désactiver les contre-valeurs. Les montants des
-              comptes restent dans leur devise d’origine.
+              Ce taux sera enregistré sur les nouvelles transactions. Modifier
+              le taux ne recalculera pas les anciennes opérations.
             </small>
           </label>
           <label>
@@ -754,6 +764,32 @@ export function SettingsPage() {
           </p>
         </form>
       </div>
+      <section className="card form-card stack">
+        <h2>Application sur cet appareil</h2>
+        <p className="muted">
+          Installez FinanceFlow depuis le navigateur pour l’ouvrir comme une
+          application. Les pages et les données déjà chargées restent disponibles
+          hors ligne. Vous pouvez aussi saisir des transactions, qui seront
+          synchronisées automatiquement au retour d’Internet.
+        </p>
+        {installed ? (
+          <p>FinanceFlow est installé sur cet appareil.</p>
+        ) : installable ? (
+          <button
+            type="button"
+            className="primary"
+            onClick={() => installApp().catch(() => flash("Installation indisponible.", true))}
+          >
+            Installer FinanceFlow
+          </button>
+        ) : (
+          <p className="muted">
+            Sur Chrome ou Edge, ouvrez le menu du navigateur puis choisissez
+            « Installer l’application ». Sur iPhone, utilisez Partager puis
+            « Sur l’écran d’accueil ».
+          </p>
+        )}
+      </section>
     </>
   );
 }

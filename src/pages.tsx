@@ -7,6 +7,7 @@ import {
 } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFinance } from "./App";
+import { discardQueuedTransaction, queueTransaction, queuedTransactions, type QueuedTransaction } from "./offline";
 import {
   api,
   send,
@@ -162,7 +163,15 @@ function Metric({
 function TransactionRows({ items }: { items: Transaction[] }) {
   return (
     <div className="transaction-list">
-      {items.map((t) => (
+      {items.map((t) => {
+        const otherCurrency = t.currency === "USD" ? "CDF" : "USD";
+        const equivalent = convertMoney(
+          t.amount_cents,
+          t.currency,
+          otherCurrency,
+          t.usd_cdf_rate,
+        );
+        return (
         <div className="transaction-row" key={t.id}>
           <span
             className="tx-icon"
@@ -191,14 +200,21 @@ function TransactionRows({ items }: { items: Transaction[] }) {
             </small>
           </div>
           <small className="tx-date">{formatDate(t.transaction_date)}</small>
-          <strong
-            className={
-              "tx-amount " + (t.type === "expense" ? "negative" : "positive")
-            }
-          >
-            {t.type === "expense" ? "−" : t.type === "income" ? "+" : ""}
-            {moneyLabel(t.amount_cents, t.currency)}
-          </strong>
+          <div className="tx-amount-wrap">
+            <strong
+              className={
+                "tx-amount " + (t.type === "expense" ? "negative" : "positive")
+              }
+            >
+              {t.type === "expense" ? "−" : t.type === "income" ? "+" : ""}
+              {moneyLabel(t.amount_cents, t.currency)}
+            </strong>
+            {equivalent !== null && (
+              <small title={`Taux enregistré : 1 USD = ${t.usd_cdf_rate} CDF`}>
+                ≈ {t.type === "expense" ? "−" : t.type === "income" ? "+" : ""}{moneyLabel(equivalent, otherCurrency)}
+              </small>
+            )}
+          </div>
           <Link
             className="icon-button"
             aria-label={"Modifier " + t.description}
@@ -207,7 +223,8 @@ function TransactionRows({ items }: { items: Transaction[] }) {
             <Icon name="edit" />
           </Link>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -313,22 +330,7 @@ export function Dashboard() {
           : "0 % vs mois précédent",
     balance = accounts
       .filter((x) => x.currency === user.currency)
-      .reduce((s, x) => s + x.balance_cents, 0),
-    hasOtherCurrency = accounts.some((x) => x.currency !== user.currency),
-    showEstimatedBalance = Boolean(user.usd_cdf_rate && hasOtherCurrency),
-    estimatedBalance = showEstimatedBalance
-      ? accounts.reduce(
-          (sum, account) =>
-            sum +
-            (convertMoney(
-              account.balance_cents,
-              account.currency,
-              user.currency,
-              user.usd_cdf_rate,
-            ) || 0),
-          0,
-        )
-      : balance;
+      .reduce((s, x) => s + x.balance_cents, 0);
   return (
     <>
       <Title
@@ -348,14 +350,10 @@ export function Dashboard() {
         ) : (
           <>
             <Metric
-              label={showEstimatedBalance ? "Solde total estimé" : "Solde disponible"}
-              value={moneyLabel(estimatedBalance, user.currency)}
+              label="Solde disponible"
+              value={moneyLabel(balance, user.currency)}
               icon="account_balance"
-              footer={
-                showEstimatedBalance
-                  ? `Tous comptes · taux manuel : 1 USD = ${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 4 }).format(user.usd_cdf_rate!)} CDF`
-                  : `${accounts.filter((x) => x.currency === user.currency).length} compte(s) en ${user.currency}`
-              }
+              footer={`${accounts.filter((x) => x.currency === user.currency).length} compte(s) en ${user.currency}`}
             />
             <Metric
               label="Revenus du mois"
@@ -487,7 +485,14 @@ export function TransactionsPage() {
       sort: "newest",
       page: 1,
     }),
-    [refresh, setRefresh] = useState(0);
+    [refresh, setRefresh] = useState(0),
+    [pending, setPending] = useState<QueuedTransaction[]>([]);
+  useEffect(() => {
+    const update = () => void queuedTransactions(user.id).then(setPending).catch(() => {});
+    update();
+    window.addEventListener("financeflow:queue-changed", update);
+    return () => window.removeEventListener("financeflow:queue-changed", update);
+  }, [user.id]);
   const query = new URLSearchParams(
       Object.entries(filters)
         .filter(([, v]) => v !== "" && v !== 0)
@@ -523,6 +528,25 @@ export function TransactionsPage() {
           </Link>
         }
       />
+      {pending.length > 0 && (
+        <section className="card pending-transactions">
+          <h2>En attente de synchronisation ({pending.length})</h2>
+          <p className="muted">Ces opérations sont enregistrées sur cet appareil. Elles seront envoyées à Aiven dès que la connexion et votre session seront disponibles.</p>
+          {pending.map((entry) => (
+            <div className="pending-row" key={entry.key}>
+              <div>
+                <strong>{entry.payload.description}</strong>
+                <small>{formatDate(entry.payload.transaction_date)} · {entry.payload.type === "expense" ? "Dépense" : entry.payload.type === "income" ? "Revenu" : "Transfert"}</small>
+              </div>
+              <strong>{formatMoney(Math.round(entry.payload.amount * 100), entry.payload.currency)}</strong>
+              <button type="button" className="text-button" onClick={async () => {
+                if (!window.confirm("Annuler cette transaction en attente ?")) return;
+                await discardQueuedTransaction(user.id, entry.payload.client_id);
+              }}>Annuler</button>
+            </div>
+          ))}
+        </section>
+      )}
       <div className="card filter-card">
         <div className="filter-grid">
           <label>
@@ -738,6 +762,7 @@ export function TransactionForm() {
     [categoryId, setCategoryId] = useState(""),
     [description, setDescription] = useState(""),
     [day, setDay] = useState(iso(new Date())),
+    [lockedRate, setLockedRate] = useState<number | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const activeAccounts = accounts.filter((a) => a.active && a.currency === cur),
@@ -754,6 +779,7 @@ export function TransactionForm() {
         setCategoryId(t.category_id || "");
         setDescription(t.description);
         setDay(t.transaction_date);
+        setLockedRate(t.usd_cdf_rate);
       })
       .catch((e) => setError(e.message));
   }, [id]);
@@ -781,7 +807,7 @@ export function TransactionForm() {
     }
     setBusy(true);
     try {
-      await send(`/transactions${id ? "/" + id : ""}`, id ? "PUT" : "POST", {
+      const draft = {
         type,
         amount: Number(amount),
         currency: cur,
@@ -790,9 +816,28 @@ export function TransactionForm() {
         category_id: categoryId,
         description,
         transaction_date: day,
-      });
-      await reload();
-      flash(id ? "Transaction modifiée." : "Transaction enregistrée.");
+        usd_cdf_rate_snapshot: user.usd_cdf_rate,
+      };
+      let queued = false;
+      if (!id) {
+        const clientId = crypto.randomUUID();
+        if (!navigator.onLine) {
+          await queueTransaction(user.id, draft, clientId);
+          queued = true;
+        } else {
+          try {
+            await send("/transactions", "POST", { ...draft, client_id: clientId });
+          } catch (error) {
+            if (navigator.onLine && (error as Error).message !== "Connexion Internet requise pour enregistrer des modifications.") throw error;
+            await queueTransaction(user.id, draft, clientId);
+            queued = true;
+          }
+        }
+      } else {
+        await send(`/transactions/${id}`, "PUT", draft);
+      }
+      if (!queued) await reload();
+      flash(queued ? "Transaction enregistrée sur cet appareil. Synchronisation au retour d’Internet." : id ? "Transaction modifiée." : "Transaction enregistrée.");
       navigate("/transactions");
     } catch (e) {
       setError((e as Error).message);
@@ -978,6 +1023,15 @@ export function TransactionForm() {
           <p className="muted">
             Les transferts ne modifient pas vos revenus ni vos dépenses globaux.
             Les comptes doivent utiliser la même devise.
+          </p>
+          <p className="muted">
+            {id
+              ? lockedRate
+                ? `Taux conservé : 1 USD = ${lockedRate} CDF. Le changement du taux actuel ne modifie pas cette transaction.`
+                : "Cette transaction ne possède pas de taux enregistré."
+              : user.usd_cdf_rate
+                ? `Taux appliqué à cette nouvelle transaction : 1 USD = ${user.usd_cdf_rate} CDF.`
+                : "Aucun taux défini. Vous pouvez en saisir un dans Paramètres pour les prochaines transactions."}
           </p>
         </aside>
       </div>

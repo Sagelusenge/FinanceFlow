@@ -18,6 +18,7 @@ import {
 } from "react-router-dom";
 import type { Account, Category, User } from "./types";
 import { api, send } from "./lib";
+import { clearOfflineData, queuedTransactions, rememberUser, syncQueuedTransactions } from "./offline";
 import { Dashboard, TransactionsPage, TransactionForm } from "./pages";
 import { AccountsPage, CategoriesPage, BudgetsPage, GoalsPage } from "./pages2";
 import {
@@ -247,14 +248,47 @@ function Auth({ onLogin }: { onLogin: (u: User) => void }) {
 }
 
 function Shell({ children }: { children: ReactNode }) {
-  const { user, flash } = useFinance(),
-    [mobile, setMobile] = useState(false);
+  const { user, flash, reload } = useFinance(),
+    [mobile, setMobile] = useState(false),
+    [pendingCount, setPendingCount] = useState(0),
+    [syncing, setSyncing] = useState(false);
   const navigate = useNavigate(),
     location = useLocation();
   useEffect(() => setMobile(false), [location.pathname]);
+  const syncPending = useCallback(async () => {
+    if (!navigator.onLine) return;
+    setSyncing(true);
+    try {
+      const count = await syncQueuedTransactions(user.id, (payload) =>
+        send("/transactions", "POST", payload),
+      );
+      if (count > 0) {
+        flash(`${count} transaction(s) synchronisée(s).`);
+        window.location.reload();
+      }
+    } catch (error) {
+      flash(`Synchronisation en attente : ${(error as Error).message}`, true);
+      await reload().catch(() => {});
+    } finally {
+      setSyncing(false);
+    }
+  }, [user.id, flash, reload]);
+  useEffect(() => {
+    const update = () => void queuedTransactions(user.id)
+      .then((items) => setPendingCount(items.length)).catch(() => {});
+    update();
+    window.addEventListener("financeflow:queue-changed", update);
+    if (navigator.onLine) void syncPending();
+    return () => window.removeEventListener("financeflow:queue-changed", update);
+  }, [user.id, syncPending]);
   async function logout() {
     try {
+      if ((await queuedTransactions(user.id)).length > 0) {
+        flash("Synchronisez ou annulez les transactions en attente avant de vous déconnecter.", true);
+        return;
+      }
       await send("/auth/logout", "POST");
+      await clearOfflineData();
       window.location.href = "/";
     } catch (e) {
       flash((e as Error).message, true);
@@ -333,6 +367,17 @@ function Shell({ children }: { children: ReactNode }) {
             </span>
           </div>
         </header>
+        {pendingCount > 0 && (
+          <div className="sync-banner" role="status">
+            <span>{pendingCount} transaction(s) en attente de synchronisation.</span>
+            <Link to="/transactions">Voir</Link>
+            {navigator.onLine && (
+              <button type="button" onClick={() => void syncPending()} disabled={syncing}>
+                {syncing ? "Synchronisation…" : "Réessayer"}
+              </button>
+            )}
+          </div>
+        )}
         <main>{children}</main>
       </div>
     </div>
@@ -346,7 +391,25 @@ export default function App() {
     [categories, setCategories] = useState<Category[]>([]),
     [toast, setToast] = useState<{ message: string; error: boolean } | null>(
       null,
-    );
+    ),
+    [online, setOnline] = useState(navigator.onLine);
+  const updateUser = useCallback((next: User) => {
+    setUser(next);
+    void rememberUser(next);
+  }, []);
+  useEffect(() => {
+    const offline = () => setOnline(false);
+    const onlineAgain = () => {
+      setOnline(true);
+      window.location.reload();
+    };
+    window.addEventListener("offline", offline);
+    window.addEventListener("online", onlineAgain);
+    return () => {
+      window.removeEventListener("offline", offline);
+      window.removeEventListener("online", onlineAgain);
+    };
+  }, []);
   const flash = useCallback((message: string, error = false) => {
     setToast({ message, error });
     setTimeout(() => setToast(null), 4500);
@@ -361,10 +424,10 @@ export default function App() {
   }, []);
   useEffect(() => {
     api<User>("/me")
-      .then(setUser)
+      .then(updateUser)
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [updateUser]);
   useEffect(() => {
     if (user) reload().catch((e) => flash((e as Error).message, true));
   }, [user, reload, flash]);
@@ -376,11 +439,16 @@ export default function App() {
     return <div className="loading-screen">Chargement de FinanceFlow…</div>;
   return (
     <>
+      {!online && (
+        <div className="offline-banner" role="status">
+          Mode hors ligne : consultez les données déjà chargées et saisissez de nouvelles transactions. Les autres modifications nécessitent Internet.
+        </div>
+      )}
       {!user ? (
-        <Auth onLogin={setUser} />
+        <Auth onLogin={updateUser} />
       ) : (
         <FinanceContext.Provider
-          value={{ user, setUser, accounts, categories, reload, flash }}
+          value={{ user, setUser: updateUser, accounts, categories, reload, flash }}
         >
           <Shell>
             <Routes>

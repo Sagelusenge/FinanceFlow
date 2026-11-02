@@ -1,9 +1,18 @@
 import type { Analytics, Currency, Transaction } from "./types";
+import { cacheResponse, cachedResponse, clearOfflineData } from "./offline";
 export async function api<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
   const isGet = !options.method || options.method.toUpperCase() === "GET";
+  if (!navigator.onLine) {
+    if (isGet) {
+      const cached = await cachedResponse<T>(path);
+      if (cached !== undefined) return cached;
+      throw new Error("Ces données ne sont pas encore disponibles hors ligne. Ouvrez cette page avec Internet une première fois.");
+    }
+    throw new Error("Connexion Internet requise pour enregistrer des modifications.");
+  }
   for (let attempt = 0; attempt < (isGet ? 30 : 1); attempt++) {
     let response: Response;
     try {
@@ -13,7 +22,12 @@ export async function api<T>(
         ...options,
       });
     } catch (error) {
-      if (!isGet || attempt === 29) throw error;
+      if (!isGet) throw new Error("Connexion Internet requise pour enregistrer des modifications.");
+      if (attempt === 29 || !navigator.onLine) {
+        const cached = await cachedResponse<T>(path);
+        if (cached !== undefined) return cached;
+        throw error;
+      }
       await new Promise((resolve) => setTimeout(resolve, 3000));
       continue;
     }
@@ -26,9 +40,17 @@ export async function api<T>(
       await new Promise((resolve) => setTimeout(resolve, 3000));
       continue;
     }
-    if (!json) throw new Error("Le serveur démarre. Réessayez dans un instant.");
+    if (!json) {
+      if (isGet) {
+        const cached = await cachedResponse<T>(path);
+        if (cached !== undefined) return cached;
+      }
+      throw new Error("Le serveur démarre. Réessayez dans un instant.");
+    }
     const body = await response.json().catch(() => ({}));
+    if (response.status === 401 && path === "/me") await clearOfflineData();
     if (!response.ok) throw new Error(body.error || "Une erreur est survenue.");
+    if (isGet) await cacheResponse(path, body);
     return body as T;
   }
   throw new Error("Le serveur ne répond pas. Réessayez dans un instant.");

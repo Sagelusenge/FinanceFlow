@@ -11,6 +11,52 @@ body {
   margin: 0;
   min-width: 320px;
 }
+.offline-banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 10px 18px;
+  background: #fff3d6;
+  color: #614417;
+  border-bottom: 1px solid #edcf8d;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+.sync-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 24px;
+  background: #e7f4ee;
+  color: #095c3d;
+  font-size: 13px;
+}
+.sync-banner a,
+.sync-banner button {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  border: 0;
+  background: none;
+}
+.pending-transactions {
+  margin-bottom: 20px;
+}
+.pending-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 0;
+  border-top: 1px solid #e7eaf0;
+}
+.pending-row div {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+}
 button,
 input,
 select,
@@ -29,6 +75,7 @@ a {
   text-decoration: none;
 }
 .material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
   font-size: 21px;
   line-height: 1;
   font-weight: normal;
@@ -521,6 +568,18 @@ main {
 .tx-amount {
   min-width: 100px;
   text-align: right;
+}
+.tx-amount-wrap {
+  min-width: 130px;
+  text-align: right;
+}
+.tx-amount-wrap .tx-amount,
+.tx-amount-wrap small {
+  display: block;
+}
+.tx-amount-wrap small {
+  color: #67758b;
+  font-size: 11px;
 }
 .positive {
   color: #006c49;

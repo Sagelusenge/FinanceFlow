@@ -563,20 +563,40 @@ app.get("/api/transactions", async (req, res) => {
   res.json({ items, total, page, pages: Math.ceil(total / limit) });
 });
 app.post("/api/transactions", async (req, res) => {
+  const clientId = req.body.client_id;
+  if (clientId !== undefined &&
+      (typeof clientId !== "string" ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientId)))
+    return fail(res, "Identifiant de transaction invalide.");
+  const id = clientId || uid();
+  const existing = clientId
+    ? await one<{ user_id: string }>("SELECT user_id FROM transactions WHERE id=?", id)
+    : undefined;
+  if (existing)
+    return existing.user_id === userId(res)
+      ? res.json({ id, replayed: true })
+      : fail(res, "Identifiant de transaction déjà utilisé.", 409);
+  const rate = Object.hasOwn(req.body, "usd_cdf_rate_snapshot")
+    ? req.body.usd_cdf_rate_snapshot
+    : (res.locals.user.usd_cdf_rate as number | null) ?? null;
+  if (rate !== null &&
+      (typeof rate !== "number" || !Number.isFinite(rate) || rate <= 0 || rate > 1e9))
+    return fail(res, "Taux de change invalide.");
   const t = await transactionInput(req.body, res);
   if (!t)
     return fail(
       res,
       "Transaction invalide. Vérifiez le compte, la catégorie, la devise, la date et le montant.",
     );
-  const id = uid();
-  await run(
-    "INSERT INTO transactions VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+  try {
+    await run(
+    "INSERT INTO transactions (id,user_id,type,amount_cents,currency,usd_cdf_rate,category_id,account_id,target_account_id,description,transaction_date,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
     id,
     userId(res),
     t.type,
     t.amount,
     t.cur,
+    rate,
     t.categoryId,
     t.accountId,
     t.targetId,
@@ -584,7 +604,14 @@ app.post("/api/transactions", async (req, res) => {
     t.d,
     now(),
     now(),
-  );
+    );
+  } catch (error) {
+    const duplicate = clientId
+      ? await one<{ user_id: string }>("SELECT user_id FROM transactions WHERE id=?", id)
+      : undefined;
+    if (duplicate?.user_id === userId(res)) return res.json({ id, replayed: true });
+    throw error;
+  }
   res.status(201).json({ id });
 });
 app.put("/api/transactions/:id", async (req, res) => {
@@ -764,14 +791,14 @@ app.get("/api/reports/csv", async (req, res) => {
   const from = date(req.query.from) || "0000-01-01",
     to = date(req.query.to) || "9999-12-31";
   const rows = await all<Record<string, unknown>>(
-    "SELECT t.transaction_date,t.type,t.description,t.amount_cents,t.currency,c.name AS category,a.name AS account FROM transactions t LEFT JOIN categories c ON c.id=t.category_id LEFT JOIN accounts a ON a.id=t.account_id WHERE t.user_id=? AND t.transaction_date>=? AND t.transaction_date<=? ORDER BY t.transaction_date DESC LIMIT 100000",
+    "SELECT t.transaction_date,t.type,t.description,t.amount_cents,t.currency,t.usd_cdf_rate,c.name AS category,a.name AS account FROM transactions t LEFT JOIN categories c ON c.id=t.category_id LEFT JOIN accounts a ON a.id=t.account_id WHERE t.user_id=? AND t.transaction_date>=? AND t.transaction_date<=? ORDER BY t.transaction_date DESC LIMIT 100000",
     userId(res),
     from,
     to,
   );
   const esc = (v: unknown) => `"${String(v ?? "").replaceAll('"', '""')}"`;
   const csv = [
-    "Date,Type,Description,Montant,Devise,Catégorie,Compte",
+    "Date,Type,Description,Montant,Devise,Taux USD/CDF appliqué,Catégorie,Compte",
     ...rows.map((r) =>
       [
         r.transaction_date,
@@ -779,6 +806,7 @@ app.get("/api/reports/csv", async (req, res) => {
         r.description,
         Number(r.amount_cents) / 100,
         r.currency,
+        r.usd_cdf_rate,
         r.category,
         r.account,
       ]

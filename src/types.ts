@@ -32,6 +32,7 @@ export interface Transaction {
   type: Flow;
   amount_cents: number;
   currency: Currency;
+  usd_cdf_rate: number | null;
   category_id: string | null;
   account_id: string;
   target_account_id: string | null;

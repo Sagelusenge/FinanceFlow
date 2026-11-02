@@ -4,7 +4,6 @@ import { useFinance } from "./App";
 import {
   api,
   send,
-  convertMoney,
   formatMoney,
   formatDate,
   iso,
@@ -77,7 +76,7 @@ const selected = (v: string, arr: { id: string }[]) =>
   arr.some((x) => x.id === v);
 
 export function AccountsPage() {
-  const { accounts, user, reload, flash } = useFinance(),
+  const { accounts, reload, flash } = useFinance(),
     [editing, setEditing] = useState<Account | null>(null),
     [name, setName] = useState(""),
     [type, setType] = useState("cash"),
@@ -165,19 +164,6 @@ export function AccountsPage() {
                 <strong className="account-balance">
                   {amount(a.balance_cents, a.currency)}
                 </strong>
-                {a.currency !== user.currency && user.usd_cdf_rate ? (
-                  <small className="muted">
-                    ≈ {amount(
-                      convertMoney(
-                        a.balance_cents,
-                        a.currency,
-                        user.currency,
-                        user.usd_cdf_rate,
-                      )!,
-                      user.currency,
-                    )} au taux manuel
-                  </small>
-                ) : null}
                 <div className="card-actions">
                   <button onClick={() => edit(a)}>Modifier</button>
                   <button onClick={() => remove(a)}>Supprimer</button>

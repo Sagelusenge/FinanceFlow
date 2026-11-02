@@ -4,6 +4,10 @@ services:
     runtime: static
     buildCommand: npm ci --include=dev && npm run build
     staticPublishPath: ./dist
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
     routes:
       - type: rewrite
         source: /api/*
