@@ -1,0 +1,58 @@
+html[data-theme="dark"] {
+  color: #eaf1ff;
+  background: #121d2c;
+}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .main-wrap {
+  background: #121d2c;
+}
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .topbar {
+  background: #1b2a3e;
+  color: #eaf1ff;
+  border-color: #2f4056;
+}
+html[data-theme="dark"] .sidebar nav a,
+html[data-theme="dark"] label,
+html[data-theme="dark"] .breadcrumb strong {
+  color: #eaf1ff;
+}
+html[data-theme="dark"] .sidebar nav a:hover,
+html[data-theme="dark"] .sidebar nav a.active,
+html[data-theme="dark"] .profile,
+html[data-theme="dark"] .segment,
+html[data-theme="dark"] .search-shortcut,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .quick-filters button,
+html[data-theme="dark"] .card-actions button,
+html[data-theme="dark"] .secondary-button {
+  background: #293a51;
+  color: #eaf1ff;
+  border-color: #3c506a;
+}
+html[data-theme="dark"] .segment button.active {
+  background: #405674;
+  color: white;
+}
+html[data-theme="dark"] .metric-icon,
+html[data-theme="dark"] .tx-icon {
+  background: #324863;
+  color: #d7e6ff;
+}
+html[data-theme="dark"] .preview-box,
+html[data-theme="dark"] .notice {
+  background: #30435d;
+  color: #eaf1ff;
+}
+html[data-theme="dark"] .transaction-row,
+html[data-theme="dark"] .category-item,
+html[data-theme="dark"] .account-mini {
+  border-color: #2f4056;
+}
+html[data-theme="dark"] .progress {
+  background: #30435d;
+}

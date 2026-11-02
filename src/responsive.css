@@ -1,0 +1,19 @@
+@media (max-width: 540px) {
+  .top-actions .primary {
+    display: none;
+  }
+  .topbar {
+    min-width: 0;
+  }
+  .breadcrumb {
+    min-width: 0;
+  }
+  .breadcrumb strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .page-title {
+    min-width: 0;
+  }
+}

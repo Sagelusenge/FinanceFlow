@@ -1,0 +1,543 @@
+<!DOCTYPE html><html lang="fr" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-fixed-dim":"#4edea3","secondary":"#006c49","on-tertiary":"#ffffff","tertiary-container":"#40000d","surface-variant":"#d3e4fe","on-surface":"#0b1c30","outline-variant":"#c6c6cd","inverse-primary":"#bec6e0","outline":"#76777d","surface-container-low":"#eff4ff","surface-bright":"#f8f9ff","tertiary-fixed":"#ffdadb","on-primary-fixed-variant":"#3f465c","tertiary-fixed-dim":"#ffb2b7","surface-dim":"#cbdbf5","on-primary-fixed":"#131b2e","surface-container-lowest":"#ffffff","primary-container":"#131b2e","on-surface-variant":"#45464d","primary-fixed":"#dae2fd","surface":"#f8f9ff","primary":"#000000","tertiary":"#000000","on-secondary":"#ffffff","primary-fixed-dim":"#bec6e0","on-error":"#ffffff","inverse-on-surface":"#eaf1ff","on-tertiary-fixed":"#40000d","inverse-surface":"#213145","error-container":"#ffdad6","surface-container-highest":"#d3e4fe","surface-tint":"#565e74","secondary-container":"#6cf8bb","on-primary-container":"#7c839b","on-secondary-container":"#00714d","surface-container":"#e5eeff","on-secondary-fixed":"#002113","secondary-fixed":"#6ffbbe","background":"#f8f9ff","surface-container-high":"#dce9ff","on-primary":"#ffffff","on-tertiary-container":"#f23d5c","on-secondary-fixed-variant":"#005236","error":"#ba1a1a","on-error-container":"#93000a","on-tertiary-fixed-variant":"#92002a","on-background":"#0b1c30"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"margin":"2rem","space-md":"1rem","gutter-mobile":"1rem","space-sm":"0.5rem","gutter":"1.5rem","margin-mobile":"1rem","space-xs":"0.25rem","space-xl":"2rem","space-lg":"1.5rem"},fontFamily:{"body-lg":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"numeric-metric":["Plus Jakarta Sans"],"display":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"display-mobile":["Plus Jakarta Sans"],"title":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"]},fontSize:{"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg-mobile":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.005em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"600"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"numeric-metric":["28px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"700"}],"display":["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"500"}],"display-mobile":["30px",{lineHeight:"38px",letterSpacing:"-0.015em",fontWeight:"700"}],"title":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center gap-space-sm"><img alt="FinanceFlow Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrBwxEVIhXUiWDfxZ-LQckogwcvYp1lDgnkB5HJZ2NVJUT1S4A2Ue_7IubMy3STUc8-JllnrMPIl5I5rS_FepplQr27Wu93IZrvixj6Yt_B7q_ux-4qiExEyYkCi2GIYaE1EfLQCF86_eLoxdZN50mPaJXyWl6vC0KKYDNi06mJDrqjggK1UFd3Ueo8LbZwvuaFICNtIqhG4qjzFctngv6XWbjZaDbm4vJRx6H0rPB"><span class="font-title text-title text-on-surface tracking-tight">FinanceFlow</span></div><nav class="flex flex-col gap-space-xs px-space-md pt-space-md" data-active-classes="bg-surface-container text-on-surface font-title text-title rounded-lg"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="vue-d-ensemble" href="#"><span class="material-symbols-outlined text-outline">dashboard</span><span class="font-title text-title">Vue d'ensemble</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="analyses-graphiques" href="#"><span class="material-symbols-outlined text-outline">monitoring</span><span class="font-title text-title">Analyses &amp; Graphiques</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm transition-colors bg-surface-container text-on-surface font-title text-title rounded-lg" data-path="nouvelle-transaction" href="#"><span class="material-symbols-outlined text-outline">add_circle</span><span class="font-title text-title">Nouvelle Transaction</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="budgets-objectifs" href="#"><span class="material-symbols-outlined text-outline">account_balance_wallet</span><span class="font-title text-title">Budgets &amp; Objectifs</span></a></nav></div><div class="p-space-md m-space-md rounded-xl bg-surface-container-low flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="relative"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARRYh23SryZ99LFJ4zefmfLmunkRvoPoobbiLGpXC3-Wqmdc73ROlVjk17hWmWivrJqHBHGpTvmu8arSRaFcN5joQjsfF5xphN63xQ3xO6qeIx9_A7og0p-wam_il839SWiP0nXVVFtgJXf_FbHwwlFoOPATs8AqaY6K9qc2uqk8O9sw6cz1wvjjkhaA8AxZVNM137dT7OEikYv9GtQUTR7uZ5ypKMPOxF8QRib-fM"><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span></div><div class="flex flex-col"><span class="font-title text-title text-on-surface leading-tight">Thomas Martin</span><span class="font-label-sm text-label-sm text-outline">Finance Lead</span></div></div><a class="text-on-surface-variant hover:text-on-surface p-space-xs" data-path="connexion" href="#"><span class="material-symbols-outlined text-outline hover:text-on-surface transition-colors">logout</span></a></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-outline font-label-md text-label-md"><span class="">Portefeuille</span><span class="material-symbols-outlined text-[16px]">chevron_right</span><span class="text-on-surface font-title text-title">Trésorerie Actuelle</span></div><div class="relative ml-space-md"><span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-outline">search</span><input class="w-64 h-10 pl-10 pr-space-md bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.02)] transition-all" placeholder="Rechercher opération, compte..." type="text"></div></div><div class="flex items-center gap-space-md"><a class="flex items-center gap-space-xs h-10 px-space-md rounded-lg bg-primary text-on-primary font-title text-title hover:bg-inverse-surface transition-colors" data-path="nouvelle-transaction" href="#"><span class="material-symbols-outlined text-[18px]">add</span><span class="">Transaction</span></a><div class="relative flex items-center justify-center p-space-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"><span class="material-symbols-outlined text-on-surface-variant">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></div><div class="flex items-center gap-space-sm pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARRYh23SryZ99LFJ4zefmfLmunkRvoPoobbiLGpXC3-Wqmdc73ROlVjk17hWmWivrJqHBHGpTvmu8arSRaFcN5joQjsfF5xphN63xQ3xO6qeIx9_A7og0p-wam_il839SWiP0nXVVFtgJXf_FbHwwlFoOPATs8AqaY6K9qc2uqk8O9sw6cz1wvjjkhaA8AxZVNM137dT7OEikYv9GtQUTR7uZ5ypKMPOxF8QRib-fM"><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface font-title text-title">Actif</span><span class="font-label-sm text-label-sm text-secondary">Synchronisé</span></div></div></div></header><main class="w-full pt-16 bg-surface px-space-xl py-space-xl"><div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-lg w-full max-w-7xl mx-auto">
+<!-- Header bar with breadcrumb context & quick action shortcuts -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs text-outline font-label-md text-label-md">
+<span class="">FinanceFlow</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="">Trésorerie</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-title text-title">Écriture comptable</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mt-1">Saisie d'une Transaction</h1>
+<p class="font-body-md text-body-md text-outline">Enregistrez un flux financier unitaire avec synchronisation bancaire instantanée.</p>
+</div>
+<!-- Segmented Type Selector -->
+<div class="flex items-center p-1.5 bg-surface-container rounded-xl shadow-sm self-start md:self-auto">
+<button class="flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg font-title text-title transition-all duration-200 bg-on-tertiary-container text-on-tertiary shadow-sm" id="btn-depense" onclick="setTransactionMode('depense')" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_outward</span>
+<span class="">Dépense</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg font-title text-title transition-all duration-200 text-outline hover:text-on-surface" id="btn-recette" onclick="setTransactionMode('recette')" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_downward</span>
+<span class="">Recette</span>
+</button>
+</div>
+</div>
+<!-- Main Two-Column + Live Preview Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- FORM BODY: Left & Right Column inputs (8 cols on desktop) -->
+<form class="lg:col-span-8 flex flex-col gap-space-lg" id="transaction-form" onsubmit="event.preventDefault(); submitTransaction();">
+<!-- ROW 1: Hero Amount Entry Container -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Montant de l'opération ($ USD &amp; Équivalent FC)</span>
+<div class="flex items-center gap-1 bg-surface-container p-1 rounded-lg"><button class="px-3 py-1 rounded font-title text-label-md bg-surface-container-lowest text-on-surface shadow-sm" id="curr-USD" onclick="setCurrency('$')" type="button">USD ($)</button><button class="px-3 py-1 rounded font-title text-label-md text-outline hover:text-on-surface" id="curr-CDF" onclick="setCurrency('FC')" type="button">CDF (FC)</button></div>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low px-space-lg py-space-md rounded-xl"><div class="flex items-baseline gap-space-sm"><span class="font-display text-display text-outline font-semibold select-none" id="amount-currency-symbol">$</span><input class="w-full bg-transparent font-display text-display text-on-surface placeholder:text-outline/40 focus:outline-none tracking-tight" id="input-amount" min="0" oninput="updatePreview()" placeholder="0.00" step="any" type="number" value="100.00"><span class="px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-tertiary-container text-on-tertiary-container select-none" id="badge-flow-type">Débit</span></div><div class="flex items-center gap-2 pt-1 border-t border-outline/10 text-label-sm"><span class="material-symbols-outlined text-[16px] text-secondary">sync_alt</span><span class="font-body-md text-outline">Équivalent converti :</span><span class="font-title text-on-surface" id="converted-amount-display">285 000 FC</span><span class="text-label-sm text-outline">(au taux de <span id="rate-tag-display" class="">2 850 FC</span>)</span></div></div>
+<!-- Quick Increment Buttons -->
+<div class="p-space-sm rounded-lg bg-surface-container border border-surface-variant flex flex-col gap-space-xs"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[20px]">tune</span><div><div class="flex items-center gap-2 flex-wrap"><span class="font-title text-label-md text-on-surface">Taux appliqué à cette transaction :</span><span class="font-title text-label-md text-secondary">1 $ =</span><div class="inline-flex items-center bg-surface-container-lowest px-2 py-0.5 rounded border border-surface-variant shadow-sm"><input id="input-custom-rate" class="w-16 font-title text-label-md text-on-surface bg-transparent focus:outline-none text-right font-bold" type="number" value="2850" step="10" min="1" oninput="applyCustomRate(this.value)"><span class="font-title text-label-md text-on-surface ml-1">FC</span></div><span class="px-2 py-0.5 rounded-full text-[11px] font-label-sm bg-secondary-fixed text-on-secondary-fixed">Modifiable librement</span></div><span class="font-label-sm text-[11px] text-outline block mt-0.5">Chaque utilisateur définit librement son propre taux pour chaque opération.</span></div></div><div class="flex items-center gap-1.5 flex-wrap"><span class="font-label-sm text-label-sm text-outline">Raccourcis :</span><button type="button" class="px-2 py-1 rounded bg-surface-container-lowest text-on-surface font-label-sm text-label-sm hover:bg-surface-container-low shadow-sm transition-colors" onclick="setPresetRate(2800)">BCC (2 800)</button><button type="button" class="px-2 py-1 rounded bg-surface-container-lowest text-on-surface font-label-sm text-label-sm hover:bg-surface-container-low shadow-sm transition-colors" onclick="setPresetRate(2850)">Marché (2 850)</button><button type="button" class="px-2 py-1 rounded bg-surface-container-lowest text-on-surface font-label-sm text-label-sm hover:bg-surface-container-low shadow-sm transition-colors" onclick="setPresetRate(2900)">Banque (2 900)</button></div></div><div class="flex items-start gap-1.5 text-label-sm text-outline/90 bg-surface-container-lowest/60 p-2 rounded"><span class="material-symbols-outlined text-[15px] text-secondary shrink-0 mt-0.5">info</span><span class=""><strong class="font-semibold text-on-surface">Taux historique de saisie :</strong> Ce taux personnalisé est sauvegardé avec l'opération lors de son enregistrement et ne changera pas si les cours futurs évoluent.</span></div></div><div class="flex items-center gap-space-xs overflow-x-auto pb-1"><div class="flex items-center gap-space-xs" id="quick-amounts-container"><button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors" onclick="addAmount(10)" type="button">+10 $</button><button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors" onclick="addAmount(50)" type="button">+50 $</button><button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors" onclick="addAmount(100)" type="button">+100 $</button><button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors" onclick="addAmount(500)" type="button">+500 $</button></div><button class="ml-auto px-3 py-1.5 rounded-lg bg-surface-container text-outline font-label-md text-label-md hover:text-on-surface transition-colors" onclick="setExactAmount(0)" type="button">Réinitialiser</button></div>
+</div>
+<!-- TWO COLUMNS OF METRIC FIELDS -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- LEFT SUB-COLUMN: Ledger Source, Classification, Timing -->
+<div class="flex flex-col gap-space-lg">
+<!-- Category Selector -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md"><div class="flex items-center justify-between"><label class="font-title text-title text-on-surface">Catégorie comptable</label><span class="font-label-sm text-label-sm text-outline">Obligatoire</span></div><div class="grid grid-cols-2 gap-space-xs" id="category-grid"><button class="category-btn active-cat flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-low text-left transition-all" onclick="selectCategory('Alimentation', 'restaurant', 'bg-tertiary-fixed text-on-tertiary-fixed')" type="button"><span class="w-8 h-8 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center material-symbols-outlined text-[18px]">restaurant</span><div class="flex flex-col min-w-0"><span class="font-title text-label-md text-on-surface truncate">Alimentation</span><span class="font-label-sm text-label-sm text-outline">Repas &amp; Frais</span></div></button><button class="category-btn flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-left transition-all" onclick="selectCategory('Loyer &amp; Charges', 'apartment', 'bg-surface-variant text-on-surface')" type="button"><span class="w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center material-symbols-outlined text-[18px]">apartment</span><div class="flex flex-col min-w-0"><span class="font-title text-label-md text-on-surface truncate">Loyer &amp; Charges</span><span class="font-label-sm text-label-sm text-outline">Locatif, Bureau</span></div></button><button class="category-btn flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-left transition-all" onclick="selectCategory('Factures &amp; SaaS', 'receipt_long', 'bg-surface-container-high text-on-surface')" type="button"><span class="w-8 h-8 rounded-lg bg-surface-container-high text-on-surface flex items-center justify-center material-symbols-outlined text-[18px]">receipt_long</span><div class="flex flex-col min-w-0"><span class="font-title text-label-md text-on-surface truncate">Factures &amp; SaaS</span><span class="font-label-sm text-label-sm text-outline">Abonnements</span></div></button></div></div>
+<!-- Date & Time Picker with Shortcuts -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<label class="font-title text-title text-on-surface">Date &amp; Heure d'effet</label>
+<button class="font-label-sm text-label-sm text-secondary hover:underline flex items-center gap-1" onclick="setTodayDate()" type="button">
+<span class="material-symbols-outlined text-[14px]">event_repeat</span>
+                  Aujourd'hui
+                </button>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-outline">Date d'opération</span>
+<input class="h-10 px-3 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container-lowest shadow-sm" id="input-date" onchange="updatePreview()" type="date" value="2024-05-18">
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-outline">Heure</span>
+<input class="h-10 px-3 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container-lowest shadow-sm" id="input-time" onchange="updatePreview()" type="time" value="14:30">
+</div>
+</div>
+<!-- Quick Time Preset Chips -->
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container" onclick="setDateOffset(0)" type="button">Aujourd'hui</button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container" onclick="setDateOffset(-1)" type="button">Hier</button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container" onclick="setDateOffset(-2)" type="button">Il y a 2j</button>
+</div>
+</div>
+<!-- Source Account Selector -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<label class="font-title text-title text-on-surface" for="select-account">Compte bancaire rattaché</label>
+<span class="font-label-sm text-label-sm text-secondary">Actif</span>
+</div>
+<div class="relative">
+<select class="w-full h-11 px-3.5 pr-10 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface appearance-none focus:outline-none focus:bg-surface-container-lowest shadow-sm cursor-pointer" id="select-account" onchange="updatePreview()"><option data-balance-usd="14820.40" data-balance-cdf="42238140" value="Compte Principal USD (Rawbank)" class="">Compte Principal USD (Rawbank) - Solde : $14 820.40 (42 238 140 FC)</option><option data-balance-usd="8200.00" data-balance-cdf="23370000" value="Compte Courant CDF (Equity BCDC)" class="">Compte Courant CDF (Equity BCDC) - Solde : 23 370 000 FC ($8 200.00)</option><option data-balance-usd="3500.00" data-balance-cdf="9975000" value="Compte Trésorerie CDF (TMB)" class="">Compte Trésorerie CDF (TMB) - Solde : 9 975 000 FC ($3 500.00)</option><option data-balance-usd="50000.00" data-balance-cdf="142500000" value="Compte Pro USD (Afriland)" class="">Compte Pro USD (Afriland) - Solde : $50 000.00 (142 500 000 FC)</option></select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">unfold_more</span>
+</div>
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span class="font-label-sm text-label-sm text-outline">Connexion API DSP2 synchronisée il y a 8 minutes.</span>
+</div>
+</div>
+</div>
+<!-- RIGHT SUB-COLUMN: Payment Mode, Counterparty, Receipt, Notes -->
+<div class="flex flex-col gap-space-lg">
+<!-- Payment Method & Beneficiary -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<label class="font-title text-title text-on-surface">Mode de règlement</label>
+<div class="grid grid-cols-2 gap-space-xs" id="payment-methods">
+<label class="flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="text-primary focus:ring-0" name="payment_mode" onchange="updatePaymentMode(this.value)" type="radio" value="Carte bancaire">
+<span class="material-symbols-outlined text-outline text-[18px]">credit_card</span>
+<span class="font-label-md text-label-md text-on-surface">Carte bancaire</span>
+</label>
+<label class="flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input class="text-primary focus:ring-0" name="payment_mode" onchange="updatePaymentMode(this.value)" type="radio" value="Virement SEPA">
+<span class="material-symbols-outlined text-outline text-[18px]">sync_alt</span>
+<span class="font-label-md text-label-md text-on-surface">Virement</span>
+</label>
+<label class="flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input class="text-primary focus:ring-0" name="payment_mode" onchange="updatePaymentMode(this.value)" type="radio" value="Prélèvement">
+<span class="material-symbols-outlined text-outline text-[18px]">account_balance</span>
+<span class="font-label-md text-label-md text-on-surface">Prélèvement</span>
+</label>
+<label class="flex items-center gap-space-xs p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input class="text-primary focus:ring-0" name="payment_mode" onchange="updatePaymentMode(this.value)" type="radio" value="Espèces">
+<span class="material-symbols-outlined text-outline text-[18px]">payments</span>
+<span class="font-label-md text-label-md text-on-surface">Espèces</span>
+</label>
+</div>
+<!-- Counterparty / Payee Autocomplete -->
+<div class="flex flex-col gap-1 mt-space-xs">
+<label class="font-title text-label-md text-on-surface" for="input-counterparty" id="label-counterparty">Bénéficiaire de l'opération</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">storefront</span>
+<input class="w-full h-11 pl-10 pr-space-md bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-sm" id="input-counterparty" list="payees-list" oninput="updatePreview()" placeholder="Ex: TotalEnergies, Amazon, Client Dupont..." type="text" value="Monoprix Opéra">
+<datalist id="payees-list">
+<option value="Monoprix Opéra">Alimentation &amp; Courses</option>
+<option value="Amazon Web Services">SaaS &amp; Infrastructure</option>
+<option value="EDF Entreprises">Électricité &amp; Énergie</option>
+<option value="Cabinet Médical Haussmann">Santé &amp; Médecine</option>
+<option value="Client TechCorp SARL">Paiement Facture Client</option>
+<option value="SNCF Connect">Transport Ferroviaire</option>
+</datalist>
+</div>
+</div>
+</div>
+<!-- Drag & Drop Receipt Zone -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<label class="font-title text-title text-on-surface">Justificatif comptable</label>
+<span class="font-label-sm text-label-sm text-outline">PDF, JPG, PNG (Max 10 Mo)</span>
+</div>
+<div class="relative flex flex-col items-center justify-center p-space-lg rounded-xl bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors text-center group" id="dropzone" onclick="triggerFileInput()">
+<input accept=".pdf,.png,.jpg,.jpeg" class="hidden" id="file-receipt" onchange="handleFileSelected(this)" type="file">
+<div class="flex flex-col items-center gap-space-xs" id="dropzone-content-default">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-outline text-[24px]">cloud_upload</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title text-label-md text-on-surface">Glissez votre reçu ici, ou <span class="text-secondary font-title">parcourez</span></span>
+<span class="font-label-sm text-label-sm text-outline">Reconnaissance OCR automatique des montants et TVA</span>
+</div>
+</div>
+<div class="hidden w-full flex items-center justify-between bg-surface-container-lowest p-space-sm rounded-lg shadow-sm" id="dropzone-content-preview">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-secondary text-[28px]">description</span>
+<div class="flex flex-col text-left min-w-0">
+<span class="font-title text-label-md text-on-surface truncate" id="receipt-filename">justificatif-ticket.pdf</span>
+<span class="font-label-sm text-label-sm text-outline">248 Ko • Vérifié prêt à l'archivage</span>
+</div>
+</div>
+<button class="p-1 rounded hover:bg-surface-container-low text-outline hover:text-error" onclick="event.stopPropagation(); removeReceipt();" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Notes & Description + Recurrence Switch -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-title text-title text-on-surface" for="input-notes">Notes &amp; Mémo analytique</label>
+<textarea class="w-full p-space-sm bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-sm resize-none" id="input-notes" oninput="updatePreview()" placeholder="Ajouter une note de contexte, référence de commande..." rows="2">Déjeuner d'équipe Q2 - Validation managériale OK.</textarea>
+</div>
+<!-- Recurrence Checkbox & Frequency Selector -->
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<label class="flex items-center gap-space-sm cursor-pointer select-none">
+<input class="w-4 h-4 text-primary rounded focus:ring-0" id="check-recurrence" onchange="toggleRecurrenceControls(this.checked)" type="checkbox">
+<div class="flex flex-col">
+<span class="font-title text-label-md text-on-surface">Opération récurrente</span>
+<span class="font-label-sm text-label-sm text-outline">Automatiser la génération périodique de cette transaction</span>
+</div>
+</label>
+<div class="hidden pl-7 flex items-center gap-space-sm" id="recurrence-options">
+<select class="h-9 px-3 rounded-lg bg-surface-container-low font-body-md text-label-md text-on-surface focus:outline-none shadow-sm" id="select-recurrence-interval" onchange="updatePreview()">
+<option value="Toutes les semaines">Hebdomadaire (toutes les semaines)</option>
+<option selected="" value="Tous les mois">Mensuel (le même jour du mois)</option>
+<option value="Tous les trimestres">Trimestriel (tous les 3 mois)</option>
+<option value="Tous les ans">Annuel (reconduction tacite)</option>
+</select>
+<span class="font-label-sm text-label-sm text-outline">jusqu'à révocation</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ACTION BAR -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm text-outline">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span class="font-label-sm text-label-sm">Données chiffrées de bout en bout selon la norme ISO 27001.</span>
+</div>
+<div class="flex items-center gap-space-md w-full sm:w-auto justify-end">
+<button class="px-space-lg h-11 rounded-lg bg-surface-container text-on-surface font-title text-title hover:bg-surface-container-high transition-colors" onclick="resetForm()" type="button">
+              Annuler
+            </button>
+<button class="flex items-center justify-center gap-space-xs px-space-xl h-11 rounded-lg bg-primary text-on-primary font-title text-title hover:bg-inverse-surface shadow-sm transition-all" id="btn-submit" type="submit">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span class="">Enregistrer la transaction</span>
+</button>
+</div>
+</div>
+</form>
+<!-- SIDE PREVIEW PANEL: Instant Validation Card (4 cols on desktop) -->
+<aside class="lg:col-span-4 flex flex-col gap-space-lg sticky top-20">
+<!-- Live Preview Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Aperçu en direct</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-fixed text-on-secondary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              Prêt à enregistrer
+            </span>
+</div>
+<!-- Synthetic Card Face -->
+<div class="relative overflow-hidden rounded-xl p-space-md bg-surface-container-high text-on-surface shadow-inner flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center material-symbols-outlined text-[18px]" id="preview-badge-icon">restaurant</span>
+<div>
+<span class="font-title text-label-md block leading-tight" id="preview-category">Alimentation</span>
+<span class="font-label-sm text-label-sm text-outline" id="preview-mode">Dépense comptabilisée</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline bg-surface-container-lowest px-2 py-0.5 rounded" id="preview-date-chip">18 Mai 2024</span>
+</div>
+<div class="flex flex-col"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-outline uppercase">Montant total ($ USD)</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-title bg-surface-container-lowest text-on-surface shadow-sm"><span class="material-symbols-outlined text-[13px] text-secondary">edit_note</span>Taux choisi : 1 $ = <span id="preview-locked-rate" class="font-bold text-on-surface">2 850</span> FC</span></div><div class="flex flex-col"><span class="font-numeric-metric text-numeric-metric text-on-tertiary-container tracking-tight" id="preview-hero-amount">- $100.00</span><span class="font-title text-label-md text-outline" id="preview-dual-amount">≈ - 285 000 FC</span></div></div>
+<!-- Ledger routing detail -->
+<div class="pt-2 border-t-0 bg-surface-container-lowest/80 p-2.5 rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-md font-label-md"><span class="font-label-sm text-label-sm text-outline uppercase">Montant total ($ USD)</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-title bg-surface-container-lowest text-on-surface shadow-sm"><span class="material-symbols-outlined text-[13px] text-secondary">edit_note</span>Taux choisi : 1 $ = <span id="preview-locked-rate" class="font-bold text-on-surface">2 850</span> FC</span></div>
+<div class="flex items-center justify-between text-body-md font-label-md"><span class="font-label-sm text-label-sm text-outline uppercase">Montant total ($ USD)</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-title bg-surface-container-lowest text-on-surface shadow-sm"><span class="material-symbols-outlined text-[13px] text-secondary">edit_note</span>Taux choisi : 1 $ = <span id="preview-locked-rate" class="font-bold text-on-surface">2 850</span> FC</span></div>
+<div class="flex items-center justify-between text-body-md font-label-md"><span class="font-label-sm text-label-sm text-outline uppercase">Montant total ($ USD)</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-title bg-surface-container-lowest text-on-surface shadow-sm"><span class="material-symbols-outlined text-[13px] text-secondary">edit_note</span>Taux choisi : 1 $ = <span id="preview-locked-rate" class="font-bold text-on-surface">2 850</span> FC</span></div>
+<div class="hidden flex items-center justify-between text-body-md font-label-md text-secondary" id="preview-recurrence-row"><span class="font-label-sm text-label-sm text-outline uppercase">Montant total ($ USD)</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-title bg-surface-container-lowest text-on-surface shadow-sm"><span class="material-symbols-outlined text-[13px] text-secondary">edit_note</span>Taux choisi : 1 $ = <span id="preview-locked-rate" class="font-bold text-on-surface">2 850</span> FC</span></div>
+</div>
+</div>
+<!-- Impact projection on liquidity -->
+<div class="flex flex-col gap-space-xs pt-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Impact sur le solde (USD &amp; CDF)</span><div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low"><div class="flex flex-col"><span class="font-label-md text-label-md text-outline">Solde actuel</span><span class="font-label-sm text-[11px] text-outline" id="preview-current-sub-balance">42 238 140 FC</span></div><span class="font-title text-label-md text-on-surface" id="preview-current-balance">$14 820.40</span></div><div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container"><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface font-semibold">Nouveau solde estimé</span><span class="font-label-sm text-[11px] text-outline" id="preview-projected-sub-balance">41 953 140 FC</span></div><span class="font-title text-label-md text-on-surface font-bold" id="preview-projected-balance">$14 720.40</span></div></div>
+</div>
+<!-- Recent Historical References for Context -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-title text-title text-on-surface">Dernières écritures similaires</span>
+<span class="material-symbols-outlined text-outline text-[18px]">history</span>
+</div>
+<div class="flex flex-col gap-space-xs mt-1"><div class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-low transition-colors"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-outline">local_cafe</span><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface">Supermarché Kin Mart Gombe</span><span class="font-label-sm text-label-sm text-outline">12 Mai • Carte bancaire</span></div></div><div class="flex flex-col text-right"><span class="font-title text-label-md text-on-tertiary-container">- 137 000 FC</span><span class="font-label-sm text-[11px] text-outline">($48.07)</span></div></div><div class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-low transition-colors"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-outline">shopping_bag</span><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface">Station TotalEnergies Ndolo</span><span class="font-label-sm text-label-sm text-outline">03 Mai • Espèces</span></div></div><div class="flex flex-col text-right"><span class="font-title text-label-md text-on-tertiary-container">- 268 000 FC</span><span class="font-label-sm text-[11px] text-outline">($94.04)</span></div></div></div>
+</div>
+<!-- System Status Mini-Card -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0">speed</span>
+<div class="flex flex-col">
+<span class="font-title text-label-md text-on-surface">Rapprochement bancaire actif</span>
+<p class="font-body-md text-label-sm text-outline leading-tight">Cette écriture sera automatiquement rapprochée de votre flux de relevé bancaire lors de la prochaine télétransmission.</p>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<!-- Notification Toast Container -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-space-sm px-space-lg py-3 rounded-xl bg-on-surface text-on-primary shadow-xl" id="toast">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">check_circle</span>
+<span class="font-title text-label-md" id="toast-text">Transaction enregistrée avec succès.</span>
+</div><script>
+  let activeExchangeRate = 2850;
+
+  function setPresetRate(val) {
+    activeExchangeRate = parseFloat(val) || 2850;
+    const rateInput = document.getElementById('input-custom-rate');
+    if (rateInput) rateInput.value = activeExchangeRate;
+    syncRatesAndAmounts();
+  }
+
+  function applyCustomRate(val) {
+    activeExchangeRate = parseFloat(val) || 2850;
+    syncRatesAndAmounts();
+  }
+
+  function syncRatesAndAmounts() {
+    const rateDisplay = document.getElementById('preview-locked-rate');
+    if (rateDisplay) rateDisplay.textContent = activeExchangeRate.toLocaleString('fr-FR');
+    const rateTag = document.getElementById('rate-tag-display');
+    if (rateTag) rateTag.textContent = activeExchangeRate.toLocaleString('fr-FR') + ' FC';
+
+    const rawAmount = parseFloat(document.getElementById('input-amount').value) || 0;
+    const convertedCDF = Math.round(rawAmount * activeExchangeRate);
+    
+    const convertedDisplay = document.getElementById('converted-amount-display');
+    if (convertedDisplay) convertedDisplay.textContent = convertedCDF.toLocaleString('fr-FR') + ' FC';
+
+    const dualDisplay = document.getElementById('preview-dual-amount');
+    if (dualDisplay) {
+      const sign = currentMode === 'depense' ? '- ' : '+ ';
+      dualDisplay.textContent = '≈ ' + sign + convertedCDF.toLocaleString('fr-FR') + ' FC';
+    }
+
+    // Projected impact in both USD and FC
+    const baseBalanceUSD = 14820.40;
+    const newBalUSD = currentMode === 'depense' ? (baseBalanceUSD - rawAmount) : (baseBalanceUSD + rawAmount);
+    const newBalCDF = Math.round(newBalUSD * activeExchangeRate);
+    
+    const projBal = document.getElementById('preview-projected-balance');
+    if (projBal) projBal.textContent = '$' + newBalUSD.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    const projSubBal = document.getElementById('preview-projected-sub-balance');
+    if (projSubBal) projSubBal.textContent = newBalCDF.toLocaleString('fr-FR') + ' FC';
+  }
+
+  // Wire into live amount updates
+  const origUpdatePreview = window.updatePreview;
+  window.updatePreview = function() {
+    if (typeof origUpdatePreview === 'function') origUpdatePreview();
+    syncRatesAndAmounts();
+  };
+  syncRatesAndAmounts();
+</script>
+</div>
+<script>
+  let currentMode = 'depense'; // 'depense' or 'recette'
+  let currentCurrency = '€';
+  let currentCategory = 'Alimentation';
+  let currentPaymentMode = 'Carte bancaire';
+
+  function setTransactionMode(mode) {
+    currentMode = mode;
+    const btnDepense = document.getElementById('btn-depense');
+    const btnRecette = document.getElementById('btn-recette');
+    const flowBadge = document.getElementById('badge-flow-type');
+    const labelCounterparty = document.getElementById('label-counterparty');
+
+    if (mode === 'depense') {
+      btnDepense.className = 'flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg font-title text-title transition-all duration-200 bg-on-tertiary-container text-on-tertiary shadow-sm';
+      btnRecette.className = 'flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg font-title text-title transition-all duration-200 text-outline hover:text-on-surface';
+      flowBadge.className = 'px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-tertiary-container text-on-tertiary-container select-none';
+      flowBadge.textContent = 'Débit';
+      labelCounterparty.textContent = "Bénéficiaire de l'opération";
+    } else {
+      btnRecette.className = 'flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg font-title text-title transition-all duration-200 bg-secondary text-on-secondary shadow-sm';
+      btnDepense.className = 'flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg font-title text-title transition-all duration-200 text-outline hover:text-on-surface';
+      flowBadge.className = 'px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-secondary-container text-on-secondary-container select-none';
+      flowBadge.textContent = 'Crédit';
+      labelCounterparty.textContent = "Émetteur / Source des fonds";
+    }
+    updatePreview();
+  }
+
+  function setCurrency(curr) {
+    currentCurrency = curr;
+    document.getElementById('amount-currency-symbol').textContent = curr;
+    
+    // Toggle active styles on currency pills
+    const pills = { '€': 'curr-EUR', '$': 'curr-USD', '£': 'curr-GBP' };
+    Object.keys(pills).forEach(k => {
+      const el = document.getElementById(pills[k]);
+      if (k === curr) {
+        el.className = 'px-2.5 py-1 rounded font-title text-label-md bg-surface-container-lowest text-on-surface shadow-sm';
+      } else {
+        el.className = 'px-2.5 py-1 rounded font-title text-label-md text-outline hover:text-on-surface';
+      }
+    });
+    updatePreview();
+  }
+
+  function addAmount(val) {
+    const input = document.getElementById('input-amount');
+    let current = parseFloat(input.value) || 0;
+    input.value = (current + val).toFixed(2);
+    updatePreview();
+  }
+
+  function setExactAmount(val) {
+    const input = document.getElementById('input-amount');
+    input.value = val === 0 ? '' : val.toFixed(2);
+    updatePreview();
+  }
+
+  function setTodayDate() {
+    setDateOffset(0);
+  }
+
+  function setDateOffset(daysOffset) {
+    const d = new Date();
+    d.setDate(d.getDate() + daysOffset);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    document.getElementById('input-date').value = `${yyyy}-${mm}-${dd}`;
+    updatePreview();
+  }
+
+  function selectCategory(catName, iconName, bgClass) {
+    currentCategory = catName;
+    document.getElementById('preview-category').textContent = catName;
+    const badgeIcon = document.getElementById('preview-badge-icon');
+    badgeIcon.textContent = iconName;
+    badgeIcon.className = `w-8 h-8 rounded-lg ${bgClass} flex items-center justify-center material-symbols-outlined text-[18px]`;
+
+    // Highlight active in category grid
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      if (btn.innerText.includes(catName)) {
+        btn.classList.add('bg-surface-container-low', 'shadow-sm');
+        btn.classList.remove('bg-surface-container-lowest');
+      } else {
+        btn.classList.remove('bg-surface-container-low', 'shadow-sm');
+        btn.classList.add('bg-surface-container-lowest');
+      }
+    });
+    updatePreview();
+  }
+
+  function updatePaymentMode(mode) {
+    currentPaymentMode = mode;
+    document.getElementById('preview-payment-type').textContent = mode;
+  }
+
+  function triggerFileInput() {
+    document.getElementById('file-receipt').click();
+  }
+
+  function handleFileSelected(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      document.getElementById('receipt-filename').textContent = file.name;
+      document.getElementById('dropzone-content-default').classList.add('hidden');
+      document.getElementById('dropzone-content-preview').classList.remove('hidden');
+      showToast('Justificatif numérisé avec succès');
+    }
+  }
+
+  function removeReceipt() {
+    document.getElementById('file-receipt').value = '';
+    document.getElementById('dropzone-content-default').classList.remove('hidden');
+    document.getElementById('dropzone-content-preview').classList.add('hidden');
+  }
+
+  function toggleRecurrenceControls(checked) {
+    const optionsDiv = document.getElementById('recurrence-options');
+    const previewRecurrenceRow = document.getElementById('preview-recurrence-row');
+    if (checked) {
+      optionsDiv.classList.remove('hidden');
+      previewRecurrenceRow.classList.remove('hidden');
+    } else {
+      optionsDiv.classList.add('hidden');
+      previewRecurrenceRow.classList.add('hidden');
+    }
+    updatePreview();
+  }
+
+  function updatePreview() {
+    const rawAmount = parseFloat(document.getElementById('input-amount').value) || 0;
+    const formattedAmount = rawAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const heroAmount = document.getElementById('preview-hero-amount');
+    
+    if (currentMode === 'depense') {
+      heroAmount.textContent = `- ${formattedAmount} ${currentCurrency}`;
+      heroAmount.className = 'font-numeric-metric text-numeric-metric text-on-tertiary-container tracking-tight';
+      document.getElementById('preview-mode').textContent = 'Dépense comptabilisée';
+    } else {
+      heroAmount.textContent = `+ ${formattedAmount} ${currentCurrency}`;
+      heroAmount.className = 'font-numeric-metric text-numeric-metric text-secondary tracking-tight';
+      document.getElementById('preview-mode').textContent = 'Recette comptabilisée';
+    }
+
+    // Counterparty
+    const payee = document.getElementById('input-counterparty').value || 'Tiers non spécifié';
+    document.getElementById('preview-counterparty').textContent = payee;
+
+    // Date
+    const rawDate = document.getElementById('input-date').value;
+    if (rawDate) {
+      const parts = rawDate.split('-');
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      const months = ['Janv.', 'Fév.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'];
+      document.getElementById('preview-date-chip').textContent = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    // Account short name
+    const accSelect = document.getElementById('select-account');
+    const selectedAccountText = accSelect.options[accSelect.selectedIndex].value;
+    const shortAcc = selectedAccountText.split('(')[0].trim();
+    document.getElementById('preview-account').textContent = shortAcc;
+
+    // Recurrence
+    const isRecurring = document.getElementById('check-recurrence').checked;
+    if (isRecurring) {
+      document.getElementById('preview-recurrence-text').textContent = document.getElementById('select-recurrence-interval').value;
+    }
+
+    // Recalculate impact balance
+    const baseBalance = 14820.40;
+    const newBal = currentMode === 'depense' ? (baseBalance - rawAmount) : (baseBalance + rawAmount);
+    document.getElementById('preview-projected-balance').textContent = `${newBal.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currentCurrency}`;
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = message;
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-20', 'opacity-0');
+    }, 3200);
+  }
+
+  function submitTransaction() {
+    const amountVal = document.getElementById('input-amount').value;
+    if (!amountVal || parseFloat(amountVal) <= 0) {
+      showToast('Veuillez renseigner un montant valide supérieur à 0.');
+      return;
+    }
+    showToast('Transaction enregistrée et validée !');
+    setTimeout(() => {
+      resetForm();
+    }, 1200);
+  }
+
+  function resetForm() {
+    document.getElementById('transaction-form').reset();
+    setTransactionMode('depense');
+    setCurrency('€');
+    selectCategory('Alimentation', 'restaurant', 'bg-tertiary-fixed text-on-tertiary-fixed');
+    setTodayDate();
+    document.getElementById('input-amount').value = '0.00';
+    document.getElementById('input-counterparty').value = '';
+    document.getElementById('input-notes').value = '';
+    removeReceipt();
+    toggleRecurrenceControls(false);
+    updatePreview();
+  }
+
+  // Initial bindings on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    updatePreview();
+  });
+</script></main></div>
+
+</body></html>
